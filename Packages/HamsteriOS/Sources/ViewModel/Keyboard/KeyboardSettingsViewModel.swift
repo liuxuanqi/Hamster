@@ -226,6 +226,16 @@ public class KeyboardSettingsViewModel: ObservableObject, Hashable, Identifiable
     }
   }
 
+  public var enableDynamicShiftSemicolon: Bool {
+    get {
+      HamsterAppDependencyContainer.shared.configuration.keyboard?.enableDynamicShiftSemicolon ?? false
+    }
+    set {
+      HamsterAppDependencyContainer.shared.configuration.keyboard?.enableDynamicShiftSemicolon = newValue
+      HamsterAppDependencyContainer.shared.applicationConfiguration.keyboard?.enableDynamicShiftSemicolon = newValue
+    }
+  }
+
   public var displayClassifySymbolButton: Bool {
     get {
       HamsterAppDependencyContainer.shared.configuration.keyboard?.displayClassifySymbolButton ?? false
@@ -843,6 +853,13 @@ public class KeyboardSettingsViewModel: ObservableObject, Hashable, Identifiable
           toggleValue: { [unowned self] in displaySemicolonButton },
           toggleHandled: { [unowned self] in
             displaySemicolonButton = $0
+          }),
+        .init(
+          text: "输入时Shift变为分号",
+          type: .toggle,
+          toggleValue: { [unowned self] in enableDynamicShiftSemicolon },
+          toggleHandled: { [unowned self] in
+            enableDynamicShiftSemicolon = $0
           }),
         .init(
           text: "启用符号按键",

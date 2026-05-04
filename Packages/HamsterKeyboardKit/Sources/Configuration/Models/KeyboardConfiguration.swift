@@ -43,6 +43,9 @@ public struct KeyboardConfiguration: Codable, Hashable {
   /// 显示分号按键
   public var displaySemicolonButton: Bool?
 
+  /// 输入时 Shift 动态变为分号键
+  public var enableDynamicShiftSemicolon: Bool?
+
   /// 显示分类符号按键
   public var displayClassifySymbolButton: Bool?
 
@@ -208,6 +211,7 @@ public struct KeyboardConfiguration: Codable, Hashable {
     self.enableHapticFeedback = try container.decodeIfPresent(Bool.self, forKey: .enableHapticFeedback)
     self.hapticFeedbackIntensity = try container.decodeIfPresent(Int.self, forKey: .hapticFeedbackIntensity)
     self.displaySemicolonButton = try container.decodeIfPresent(Bool.self, forKey: .displaySemicolonButton)
+    self.enableDynamicShiftSemicolon = try container.decodeIfPresent(Bool.self, forKey: .enableDynamicShiftSemicolon)
     self.displayClassifySymbolButton = try container.decodeIfPresent(Bool.self, forKey: .displayClassifySymbolButton)
     self.displaySpaceLeftButton = try container.decodeIfPresent(Bool.self, forKey: .displaySpaceLeftButton)
     self.spaceLeftButtonProcessByRIME = try container.decodeIfPresent(Bool.self, forKey: .spaceLeftButtonProcessByRIME)
@@ -255,6 +259,7 @@ public struct KeyboardConfiguration: Codable, Hashable {
     case enableHapticFeedback
     case hapticFeedbackIntensity
     case displaySemicolonButton
+    case enableDynamicShiftSemicolon
     case displayClassifySymbolButton
     case displaySpaceLeftButton
     case spaceLeftButtonProcessByRIME
@@ -303,6 +308,7 @@ public struct KeyboardConfiguration: Codable, Hashable {
     try container.encodeIfPresent(self.enableHapticFeedback, forKey: .enableHapticFeedback)
     try container.encodeIfPresent(self.hapticFeedbackIntensity, forKey: .hapticFeedbackIntensity)
     try container.encodeIfPresent(self.displaySemicolonButton, forKey: .displaySemicolonButton)
+    try container.encodeIfPresent(self.enableDynamicShiftSemicolon, forKey: .enableDynamicShiftSemicolon)
     try container.encodeIfPresent(self.displayClassifySymbolButton, forKey: .displayClassifySymbolButton)
     try container.encodeIfPresent(self.displaySpaceLeftButton, forKey: .displaySpaceLeftButton)
     try container.encodeIfPresent(self.spaceLeftButtonProcessByRIME, forKey: .spaceLeftButtonProcessByRIME)

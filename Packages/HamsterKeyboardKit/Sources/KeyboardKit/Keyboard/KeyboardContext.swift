@@ -317,6 +317,11 @@ public class KeyboardContext: ObservableObject {
   /// 是否启用分号键
   lazy var displaySemicolonButton: Bool = hamsterConfiguration?.keyboard?.displaySemicolonButton ?? false
 
+  /// 输入时 Shift 动态变为分号键
+  var enableDynamicShiftSemicolon: Bool {
+    hamsterConfiguration?.keyboard?.enableDynamicShiftSemicolon ?? false
+  }
+
   /// 是否启用分类符号按键
   var displayClassifySymbolButton: Bool {
     hamsterConfiguration?.keyboard?.displayClassifySymbolButton ?? true

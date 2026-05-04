@@ -126,7 +126,9 @@ open class StandardKeyboardActionHandler: NSObject, KeyboardActionHandler {
     gestureAction(keyboardController)
     // tryReinsertAutocompleteRemovedSpace(after: gesture, on: action)
     // tryEndSentence(after: gesture, on: action)
-    tryChangeKeyboardType(after: gesture, on: action)
+    if !isDynamicShiftSemicolonActive(gesture: gesture, action: action) {
+      tryChangeKeyboardType(after: gesture, on: action)
+    }
     tryRegisterEmoji(after: gesture, on: action)
     tryRegisterSymbol(after: gesture, on: action)
     // keyboardController?.performAutocomplete()
@@ -188,7 +190,23 @@ open class StandardKeyboardActionHandler: NSObject, KeyboardActionHandler {
     if keyboardContext.keyboardType.isAlphabetic {
       return action.standardAction(for: gesture, processByRIME: false)
     }
+    // 输入中文时 Shift 动态变为分号
+    if gesture == .release,
+       case .shift = action,
+       keyboardContext.enableDynamicShiftSemicolon,
+       keyboardContext.keyboardType.isChinesePrimaryKeyboard,
+       !rimeContext.userInputKey.isEmpty
+    {
+      return KeyboardAction.character(";").standardAction(for: gesture)
+    }
     return action.standardAction(for: gesture)
+  }
+
+  private func isDynamicShiftSemicolonActive(gesture: KeyboardGesture, action: KeyboardAction) -> Bool {
+    guard gesture == .release, case .shift = action else { return false }
+    return keyboardContext.enableDynamicShiftSemicolon
+      && keyboardContext.keyboardType.isChinesePrimaryKeyboard
+      && !rimeContext.userInputKey.isEmpty
   }
 
   /**

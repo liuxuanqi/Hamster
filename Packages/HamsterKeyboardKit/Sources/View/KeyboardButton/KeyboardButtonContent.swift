@@ -5,6 +5,7 @@
 //  Created by morse on 2023/8/10.
 //
 
+import Combine
 import HamsterKit
 import HamsterUIKit
 import UIKit
@@ -19,6 +20,24 @@ public class KeyboardButtonContentView: NibLessView {
   private let keyboardContext: KeyboardContext
   private let rimeContext: RimeContext
   private var oldBounds: CGRect = .zero
+  private var cancellables = Set<AnyCancellable>()
+
+  /// Shift 动态分号覆盖标签
+  private lazy var semicolonOverlayLabel: UILabel = {
+    let label = UILabel(frame: .zero)
+    label.text = ";"
+    label.textAlignment = .center
+    label.font = .systemFont(ofSize: 18, weight: .medium)
+    label.isHidden = true
+    return label
+  }()
+
+  private var isShiftSemicolonEnabled: Bool {
+    if case .shift = action {
+      return keyboardContext.enableDynamicShiftSemicolon && keyboardContext.keyboardType.isChinesePrimaryKeyboard
+    }
+    return false
+  }
 
   private lazy var spaceContentView: SpaceContentView = {
     let view = SpaceContentView(keyboardContext: keyboardContext, rimeContext: rimeContext, item: item, style: style, spaceText: buttonText)
@@ -87,6 +106,7 @@ public class KeyboardButtonContentView: NibLessView {
 
     setupContentView()
     setupAppearance()
+    setupDynamicShiftSemicolon()
   }
 
   // MARK: - Layout
@@ -128,7 +148,12 @@ public class KeyboardButtonContentView: NibLessView {
       upSwipeLabel.frame = .zero
       downSwipeLabel.frame = .zero
       contentView.frame = .zero
+      semicolonOverlayLabel.frame = .zero
       return
+    }
+
+    if isShiftSemicolonEnabled {
+      semicolonOverlayLabel.frame = self.oldBounds
     }
 
     if keyboardContext.disableSwipeLabel {
@@ -219,5 +244,24 @@ public class KeyboardButtonContentView: NibLessView {
     } else {
       textContentView.setStyle(style)
     }
+  }
+
+  // MARK: - Dynamic Shift → Semicolon
+
+  private func setupDynamicShiftSemicolon() {
+    guard isShiftSemicolonEnabled else { return }
+
+    addSubview(semicolonOverlayLabel)
+    semicolonOverlayLabel.textColor = style.foregroundColor
+
+    rimeContext.userInputKeyPublished
+      .receive(on: DispatchQueue.main)
+      .sink { [weak self] inputKey in
+        guard let self = self else { return }
+        let composing = !inputKey.isEmpty
+        self.semicolonOverlayLabel.isHidden = !composing
+        self.contentView.isHidden = composing
+      }
+      .store(in: &cancellables)
   }
 }
