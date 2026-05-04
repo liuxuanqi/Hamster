@@ -3,7 +3,7 @@
     {
       "identity" : "gcdwebserver",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/JacobHearst/GCDWebServer.git",
+      "location" : "https://github.com/imfuxiao/GCDWebServer.git",
       "state" : {
         "revision" : "14f9eedb296c5b71fec971d8256ef3bfc20a2245",
         "version" : "3.5.5"
@@ -21,10 +21,19 @@
     {
       "identity" : "runestone",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/simonbs/Runestone",
+      "location" : "https://github.com/simonbs/Runestone.git",
       "state" : {
-        "revision" : "1d0e79051a18d79f12882e9fad0b130e47d4a06b",
-        "version" : "0.3.0"
+        "revision" : "592434a103a4d1ab83e14f87ac6eef569dd7a99d",
+        "version" : "0.5.2"
+      }
+    },
+    {
+      "identity" : "tree-sitter",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/tree-sitter/tree-sitter",
+      "state" : {
+        "revision" : "98be227227af10cc7a269cb3ffb23686c0610b17",
+        "version" : "0.20.9"
       }
     },
     {
@@ -32,8 +41,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/simonbs/TreeSitterLanguages.git",
       "state" : {
-        "revision" : "a15ab30453d14097355d7d78ec7c0feb008cfbba",
-        "version" : "0.1.7"
+        "revision" : "15cf3a9ec3ab95e0d058b7df9f35619123c9e02d",
+        "version" : "0.1.10"
       }
     },
     {

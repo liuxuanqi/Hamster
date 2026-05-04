@@ -290,7 +290,7 @@ extension CustomizeKeyboardTest {
                   landscape: percentage(0.195)
               - action: space
                 label:
-                  loadingText: "仓输入法"
+                  loadingText: "天枢"
                   text: "空格"
                 width: available
               - action: keyboardType(alphabetic)

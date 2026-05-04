@@ -695,7 +695,7 @@ keyboards:
           - action: space
             width: available
             label:
-              loadingText: "仓输入法"
+              loadingText: "天枢"
               text: "空格"
           - action: character(,)
             label: "，"
@@ -862,7 +862,7 @@ keyboards:
           - action: space
             width: available
             label:
-              loadingText: "仓输入法"
+              loadingText: "天枢"
               text: "空格"
           - action: character(，)
             label: "，"

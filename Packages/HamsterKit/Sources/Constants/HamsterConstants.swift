@@ -10,13 +10,13 @@ import Foundation
 /// Hamster 应用常量
 public enum HamsterConstants {
   /// AppGroup ID
-  public static let appGroupName = "group.dev.fuxiao.app.Hamster"
+  public static let appGroupName = "group.xuanqi.liu.TianShu"
 
   /// iCloud ID
-  public static let iCloudID = "iCloud.dev.fuxiao.app.hamsterapp"
+  public static let iCloudID = "iCloud.xuanqi.liu.TianShu"
 
   /// keyboard Bundle ID
-  public static let keyboardBundleID = "dev.fuxiao.app.Hamster.HamsterKeyboard"
+  public static let keyboardBundleID = "xuanqi.liu.TianShu.Keyboard"
 
   /// 跳转至系统添加键盘URL
   public static let addKeyboardPath = "app-settings:root=General&path=Keyboard/KEYBOARDS"
@@ -37,5 +37,5 @@ public enum HamsterConstants {
 
   /// APP URL
   /// 注意: 此值需要与info.plist中的参数保持一致
-  public static let appURL = "hamster://dev.fuxiao.app.hamster"
+  public static let appURL = "tianshu://xuanqi.liu.tianshu"
 }

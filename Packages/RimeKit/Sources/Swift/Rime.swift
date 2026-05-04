@@ -49,8 +49,8 @@ public class Rime {
     let traits = IRimeTraits()
     traits.sharedDataDir = sharedSupportDir
     traits.userDataDir = userDataDir
-    traits.distributionCodeName = "Hamster"
-    traits.distributionName = "Hamster"
+    traits.distributionCodeName = "TianShu"
+    traits.distributionName = "TianShu"
     traits.distributionVersion = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? ""
     // appName设置名字后, 在重复调用rimeAPI.setup()方法时会产生异常
     // utilities.cc:365] Check failed: !IsGoogleLoggingInitialized() You called InitGoogleLogging() twice!

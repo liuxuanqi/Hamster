@@ -24,10 +24,10 @@
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>CFBundleURLName</key>
-			<string>dev.fuxiao.app.hamster</string>
+			<string>xuanqi.liu.TianShu</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>hamster</string>
+				<string>tianshu</string>
 			</array>
 		</dict>
 	</array>
@@ -35,12 +35,12 @@
 	<false/>
 	<key>NSUbiquitousContainers</key>
 	<dict>
-		<key>iCloud.dev.fuxiao.app.hamsterapp</key>
+		<key>iCloud.xuanqi.liu.TianShu</key>
 		<dict>
 			<key>NSUbiquitousContainerIsDocumentScopePublic</key>
 			<true/>
 			<key>NSUbiquitousContainerName</key>
-			<string>Hamster</string>
+			<string>天枢</string>
 			<key>NSUbiquitousContainerSupportedFolderLevels</key>
 			<string>Any</string>
 		</dict>
