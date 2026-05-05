@@ -90,6 +90,7 @@ public extension KeyboardAction {
   var standardLongPressAction: GestureAction? {
     switch self {
     case .space: return { _ in }
+    case .primary: return { $0?.insertText("\u{2028}") }
     default: return nil
     }
   }

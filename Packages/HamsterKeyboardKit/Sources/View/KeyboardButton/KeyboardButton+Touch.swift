@@ -33,6 +33,7 @@ public extension KeyboardButton {
     guard isPressed else { return }
     isPressed = false
     updateButtonStyle(isPressed: false)
+    let pressDuration = touchBeginTimestamp.map { touch.timestamp - $0 }
     touchBeginTimestamp = nil
     dragStartLocation = nil
     longPressDate = nil
@@ -58,7 +59,7 @@ public extension KeyboardButton {
         // 判断手势区域是否超出当前 bounds
         let currentPoint = touch.location(in: self)
         if bounds.contains(currentPoint) {
-          handleReleaseInside()
+          handleReleaseInside(pressDuration: pressDuration)
         } else {
           handleReleaseOutside(currentPoint)
         }
@@ -145,9 +146,15 @@ public extension KeyboardButton {
     dragAction(start: startLocation, current: currentPoint)
   }
 
-  func handleReleaseInside() {
+  func handleReleaseInside(pressDuration: TimeInterval? = nil) {
     updateShouldApplyReleaseAction()
     guard shouldApplyReleaseAction else { return }
+    if case .primary = item.action,
+       let duration = pressDuration,
+       duration >= 0.3 {
+      actionHandler.handle(.longPress, on: item.action)
+      return
+    }
     Logger.statistics.debug("inside release")
     releaseAction()
   }
@@ -194,8 +201,11 @@ public extension KeyboardButton {
   }
 
   func longPressAction() {
-    // 空格长按不需要应用 release
-    shouldApplyReleaseAction = shouldApplyReleaseAction && item.action != .space
+    if case .space = item.action {
+      shouldApplyReleaseAction = false
+    } else if case .primary = item.action {
+      shouldApplyReleaseAction = false
+    }
     Logger.statistics.debug("longPressAction()")
     actionHandler.handle(.longPress, on: item.action)
   }
