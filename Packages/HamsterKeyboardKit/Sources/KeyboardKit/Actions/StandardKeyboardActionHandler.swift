@@ -35,6 +35,9 @@ open class StandardKeyboardActionHandler: NSObject, KeyboardActionHandler {
   /// 空格拖动手势是否激活
   public var isSpaceDragGestureActive = false
 
+  /// 全键盘拖动光标是否激活
+  public var isGlobalCursorDragActive = false
+
   /// 空格拖动手势的激活位置
   private var spaceDragActivationLocation: CGPoint?
   private var rimeContext: RimeContext
@@ -403,16 +406,31 @@ extension StandardKeyboardActionHandler {
 private extension StandardKeyboardActionHandler {
   /// 是否为空格移动光标操作
   func isSpaceCursorDrag(_ action: KeyboardAction) -> Bool {
-    guard action == .space else { return false }
     guard let handler = spaceDragGestureHandler as? SpaceCursorDragGestureHandler else { return false }
-    return handler.currentDragTextPositionOffset != 0
+    if action == .space {
+      return handler.currentDragTextPositionOffset != 0
+    }
+    if keyboardContext.enableFullKeyboardCursorDrag && isGlobalCursorDragActive {
+      return handler.currentDragTextPositionOffset != 0
+    }
+    return false
   }
 
   /// 尝试处理空格拖动操作
   func tryHandleSpaceDrag(on action: KeyboardAction, from startLocation: CGPoint, to currentLocation: CGPoint) {
-    guard action == .space else { return }
-    guard keyboardContext.spaceLongPressBehavior == .moveInputCursor else { return }
-    guard isSpaceDragGestureActive else { return }
+    if action == .space {
+      guard keyboardContext.spaceLongPressBehavior == .moveInputCursor else { return }
+      guard isSpaceDragGestureActive else { return }
+      let activationLocation = spaceDragActivationLocation ?? currentLocation
+      spaceDragActivationLocation = activationLocation
+      spaceDragGestureHandler.handleDragGesture(
+        from: activationLocation,
+        to: currentLocation
+      )
+      return
+    }
+    guard keyboardContext.enableFullKeyboardCursorDrag else { return }
+    guard isGlobalCursorDragActive else { return }
     let activationLocation = spaceDragActivationLocation ?? currentLocation
     spaceDragActivationLocation = activationLocation
     spaceDragGestureHandler.handleDragGesture(
@@ -423,13 +441,24 @@ private extension StandardKeyboardActionHandler {
 
   /// 尝试更新空格拖动操作状态
   func tryUpdateSpaceDragState(for gesture: KeyboardGesture, on action: KeyboardAction) {
-    guard action == .space else { return }
+    if action == .space {
+      switch gesture {
+      case .press:
+        isSpaceDragGestureActive = false
+        spaceDragActivationLocation = nil
+      case .longPress:
+        isSpaceDragGestureActive = true
+      default: return
+      }
+      return
+    }
+    guard keyboardContext.enableFullKeyboardCursorDrag else { return }
     switch gesture {
     case .press:
-      isSpaceDragGestureActive = false
+      isGlobalCursorDragActive = false
       spaceDragActivationLocation = nil
     case .longPress:
-      isSpaceDragGestureActive = true
+      isGlobalCursorDragActive = true
     default: return
     }
   }

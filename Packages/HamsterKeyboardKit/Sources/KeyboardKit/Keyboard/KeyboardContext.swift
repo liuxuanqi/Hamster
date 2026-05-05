@@ -322,6 +322,11 @@ public class KeyboardContext: ObservableObject {
     hamsterConfiguration?.keyboard?.enableDynamicShiftSemicolon ?? false
   }
 
+  /// 全键盘长按拖动移动光标
+  var enableFullKeyboardCursorDrag: Bool {
+    hamsterConfiguration?.keyboard?.enableFullKeyboardCursorDrag ?? true
+  }
+
   /// 自定义按键行高度
   var customKeyboardRowHeight: CGFloat? {
     guard let h = hamsterConfiguration?.keyboard?.keyboardRowHeight else { return nil }
