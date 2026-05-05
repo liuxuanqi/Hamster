@@ -236,6 +236,16 @@ public class KeyboardSettingsViewModel: ObservableObject, Hashable, Identifiable
     }
   }
 
+  public var keyboardRowHeight: Int {
+    get {
+      HamsterAppDependencyContainer.shared.configuration.keyboard?.keyboardRowHeight ?? 56
+    }
+    set {
+      HamsterAppDependencyContainer.shared.configuration.keyboard?.keyboardRowHeight = newValue
+      HamsterAppDependencyContainer.shared.applicationConfiguration.keyboard?.keyboardRowHeight = newValue
+    }
+  }
+
   public var displayClassifySymbolButton: Bool {
     get {
       HamsterAppDependencyContainer.shared.configuration.keyboard?.displayClassifySymbolButton ?? false
@@ -1022,6 +1032,16 @@ public class KeyboardSettingsViewModel: ObservableObject, Hashable, Identifiable
         stepValue: 1,
         valueChangeHandled: { [unowned self] in
           heightOfToolbar = Int($0)
+        }),
+      .init(
+        text: "按键行高度",
+        type: .step,
+        textValue: { [unowned self] in String(keyboardRowHeight) },
+        minValue: 40,
+        maxValue: 80,
+        stepValue: 2,
+        valueChangeHandled: { [unowned self] in
+          keyboardRowHeight = Int($0)
         }),
       .init(
         text: "编码区高度",

@@ -322,6 +322,12 @@ public class KeyboardContext: ObservableObject {
     hamsterConfiguration?.keyboard?.enableDynamicShiftSemicolon ?? false
   }
 
+  /// 自定义按键行高度
+  var customKeyboardRowHeight: CGFloat? {
+    guard let h = hamsterConfiguration?.keyboard?.keyboardRowHeight else { return nil }
+    return CGFloat(h)
+  }
+
   /// 是否启用分类符号按键
   var displayClassifySymbolButton: Bool {
     hamsterConfiguration?.keyboard?.displayClassifySymbolButton ?? true

@@ -75,10 +75,14 @@ public extension KeyboardLayoutConfiguration
     for context: KeyboardContext
   ) -> KeyboardLayoutConfiguration
   {
-    standard(
+    var config = standard(
       forDevice: context.isKeyboardFloating ? .phone : context.deviceType,
       screenSize: context.screenSize,
       orientation: context.interfaceOrientation)
+    if let customHeight = context.customKeyboardRowHeight {
+      config.rowHeight = customHeight
+    }
+    return config
   }
 
   /**
