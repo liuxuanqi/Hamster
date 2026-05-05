@@ -42,16 +42,7 @@ public extension KeyboardButton {
 
     defer {
       endAction()
-
-      // action 手势结束后重置空格划动激活状态
-      if item.action == .space, let actionHandler = actionHandler as? StandardKeyboardActionHandler, actionHandler.isSpaceDragGestureActive {
-        actionHandler.isSpaceDragGestureActive = false
-      }
-
-      // 全键盘拖动光标结束后重置状态
-      if let actionHandler = actionHandler as? StandardKeyboardActionHandler, actionHandler.isGlobalCursorDragActive {
-        actionHandler.isGlobalCursorDragActive = false
-      }
+      resetCursorDragStates()
     }
 
     // 取消状态不触发 .release
@@ -82,16 +73,7 @@ public extension KeyboardButton {
     repeatTimer.stop()
     self.swipeGestureHandle = nil
     endAction()
-
-    // action 手势结束后重置空格划动激活状态
-    if item.action == .space, let actionHandler = actionHandler as? StandardKeyboardActionHandler, actionHandler.isSpaceDragGestureActive {
-      actionHandler.isSpaceDragGestureActive = false
-    }
-
-    // 全键盘拖动光标结束后重置状态
-    if let actionHandler = actionHandler as? StandardKeyboardActionHandler, actionHandler.isGlobalCursorDragActive {
-      actionHandler.isGlobalCursorDragActive = false
-    }
+    resetCursorDragStates()
   }
 
   func tryTriggerLongPressAfterDelay() {
@@ -159,11 +141,9 @@ public extension KeyboardButton {
   func handleReleaseInside(pressDuration: TimeInterval? = nil) {
     updateShouldApplyReleaseAction()
     guard shouldApplyReleaseAction else { return }
-    // 全键盘拖动光标期间不触发按键输出
     if let handler = actionHandler as? StandardKeyboardActionHandler,
        handler.isGlobalCursorDragActive,
-       let dragHandler = handler.spaceDragGestureHandler as? SpaceCursorDragGestureHandler,
-       dragHandler.currentDragTextPositionOffset != 0 {
+       (handler.spaceDragGestureHandler as? SpaceCursorDragGestureHandler)?.currentDragTextPositionOffset != 0 {
       return
     }
     if case .primary = item.action,
@@ -205,6 +185,12 @@ public extension KeyboardButton {
   func resetGestureState() {
     lastDragLocation = nil
     shouldApplyReleaseAction = true
+  }
+
+  func resetCursorDragStates() {
+    guard let handler = actionHandler as? StandardKeyboardActionHandler else { return }
+    if item.action == .space { handler.isSpaceDragGestureActive = false }
+    handler.isGlobalCursorDragActive = false
   }
 
   func pressAction() {
