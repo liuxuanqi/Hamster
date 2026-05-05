@@ -97,32 +97,38 @@ public extension KeyboardButton {
   }
 
   func tryHandleDrag(_ touch: UITouch, event: UIEvent?) {
-    // dragStartLocation 在 touchesBegan 阶段设置值，在 touchesEnd/touchesCancel 阶段取消值
     guard let startLocation = dragStartLocation else { return }
     let currentPoint = touch.location(in: self)
     lastDragLocation = currentPoint
 
+    // 全键盘拖动光标已激活时，直接处理光标移动
+    if let handler = actionHandler as? StandardKeyboardActionHandler, handler.isGlobalCursorDragActive {
+      dragAction(start: startLocation, current: currentPoint)
+      return
+    }
+
     /// 划动手势应在长按手势之前触发
     if let touchBeginTimestamp = touchBeginTimestamp, touch.timestamp - touchBeginTimestamp < longPressDelay {
-      let distanceThreshold: CGFloat = keyboardContext.distanceThreshold // 划动距离的阈值
-      let tangentThreshold: CGFloat = keyboardContext.tangentThreshold // 划动角度正切阈值
+      let distanceThreshold: CGFloat = keyboardContext.distanceThreshold
+      let tangentThreshold: CGFloat = keyboardContext.tangentThreshold
 
       let distanceY = currentPoint.y - startLocation.y
       let distanceX = currentPoint.x - startLocation.x
 
-      // 两点距离
       let distance = sqrt(pow(distanceY, 2) + pow(distanceX, 2))
 
-      // 轻扫的距离必须符合阈值要求
       if distance >= distanceThreshold {
-        // Logger.statistics.debug("current point: \(currentPoint.debugDescription)")
-        // Logger.statistics.debug("start point: \(startLocation.debugDescription)")
-
-        // 检测如果当前处在空格划动状态下，则不触发划动手势
         if let actionHandler = actionHandler as? StandardKeyboardActionHandler, !actionHandler.isSpaceDragGestureActive {
-          // 获取划动方向
           if let direction = SwipeDirection.direction(distanceX: distanceX, distanceY: distanceY, tangentThreshold: tangentThreshold) {
-            // 生成划动手势处理函数，函数会在 touch 释放时触发
+            // 水平方向无滑动绑定时，立即进入光标拖动模式
+            if keyboardContext.enableFullKeyboardCursorDrag && (direction == .left || direction == .right) {
+              let hasBinding = item.swipes.contains { $0.direction == (direction == .left ? .left : .right) }
+              if !hasBinding {
+                actionHandler.isGlobalCursorDragActive = true
+                dragAction(start: startLocation, current: currentPoint)
+                return
+              }
+            }
             swipeGestureHandle = { [weak self] in
               guard let self = self else { return }
               swipeAction(direction: direction)
@@ -133,7 +139,6 @@ public extension KeyboardButton {
       }
       return
     }
-    // TODO: 其他划动处理
     swipeGestureHandle = nil
     dragAction(start: startLocation, current: currentPoint)
   }
@@ -143,7 +148,7 @@ public extension KeyboardButton {
     guard shouldApplyReleaseAction else { return }
     if let handler = actionHandler as? StandardKeyboardActionHandler,
        handler.isGlobalCursorDragActive,
-       (handler.spaceDragGestureHandler as? SpaceCursorDragGestureHandler)?.currentDragTextPositionOffset != 0 {
+       handler.globalCursorDragGestureHandler.currentDragTextPositionOffset != 0 {
       return
     }
     if case .primary = item.action,

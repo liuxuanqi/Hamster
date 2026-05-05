@@ -37,6 +37,18 @@ open class StandardKeyboardActionHandler: NSObject, KeyboardActionHandler {
 
   private var spaceDragActivationLocation: CGPoint?
   private var globalDragActivationLocation: CGPoint?
+  public lazy var globalCursorDragGestureHandler: SpaceCursorDragGestureHandler = {
+    weak var controller = keyboardController
+    weak var context = keyboardContext
+    return SpaceCursorDragGestureHandler(
+      feedbackHandler: keyboardFeedbackHandler,
+      sensitivity: .custom(points: 20),
+      action: {
+        let offset = context?.textDocumentProxy.spaceDragOffset(for: $0)
+        controller?.adjustTextPosition(byCharacterOffset: offset ?? $0)
+      }
+    )
+  }()
   private var rimeContext: RimeContext
 
   // MARK: - Initialization
@@ -402,9 +414,14 @@ extension StandardKeyboardActionHandler {
 
 private extension StandardKeyboardActionHandler {
   func isSpaceCursorDrag(_ action: KeyboardAction) -> Bool {
-    guard let handler = spaceDragGestureHandler as? SpaceCursorDragGestureHandler else { return false }
-    guard handler.currentDragTextPositionOffset != 0 else { return false }
-    return action == .space || (keyboardContext.enableFullKeyboardCursorDrag && isGlobalCursorDragActive)
+    if action == .space {
+      guard let handler = spaceDragGestureHandler as? SpaceCursorDragGestureHandler else { return false }
+      return handler.currentDragTextPositionOffset != 0
+    }
+    if keyboardContext.enableFullKeyboardCursorDrag && isGlobalCursorDragActive {
+      return globalCursorDragGestureHandler.currentDragTextPositionOffset != 0
+    }
+    return false
   }
 
   func tryHandleSpaceDrag(on action: KeyboardAction, from startLocation: CGPoint, to currentLocation: CGPoint) {
@@ -420,7 +437,7 @@ private extension StandardKeyboardActionHandler {
     guard isGlobalCursorDragActive else { return }
     let activationLocation = globalDragActivationLocation ?? currentLocation
     globalDragActivationLocation = activationLocation
-    spaceDragGestureHandler.handleDragGesture(from: activationLocation, to: currentLocation)
+    globalCursorDragGestureHandler.handleDragGesture(from: activationLocation, to: currentLocation)
   }
 
   func tryUpdateSpaceDragState(for gesture: KeyboardGesture, on action: KeyboardAction) {
