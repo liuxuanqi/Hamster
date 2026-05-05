@@ -5,6 +5,11 @@ aux_source_directory(rime/config rime_config_src)
 aux_source_directory(rime/dict rime_dict_src)
 aux_source_directory(rime/gear rime_gears_src)
 aux_source_directory(rime/lever rime_levers_src)
+aux_source_directory(rime/lua rime_lua_src)
+aux_source_directory(rime/lua/lib rime_lua_lib_src)
+aux_source_directory(rime/lua/lib/lua rime_lua_lib_lua_src)
+set_property(SOURCE ${rime_lua_lib_lua_src} PROPERTY COMPILE_DEFINITIONS "LUA_USE_POSIX;LUA_USE_IOS;LUA_COMPAT_5_3")
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/rime/lua/lib/lua)
 
 if(rime_plugins_library)
   aux_source_directory(../plugins rime_plugins_src)
@@ -13,7 +18,10 @@ endif()
 set(rime_core_module_src
   ${rime_api_src}
   ${rime_base_src}
-  ${rime_config_src})
+  ${rime_config_src}
+  ${rime_lua_src}
+  ${rime_lua_lib_src}
+  ${rime_lua_lib_lua_src})
 
 # add rc info for windows MSVC build
 if(WIN32)
