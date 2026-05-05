@@ -8,6 +8,8 @@
 .deps
 .HamsterInputSchemas
 Resources/SharedSupport/*.zip
+Resources/SharedSupport/schemas/wanxiang/dicts/
+Resources/SharedSupport/schemas/wanxiang/wanxiang_reverse.dict.yaml
 *.zip
 *.tgz
 
