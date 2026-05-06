@@ -131,8 +131,32 @@ public class Rime {
             return false
         }
 
+        // Punctuation while composing → commit first candidate + append punctuation
+        let isComposing = !engine.preedit().isEmpty
+        if isComposing && !char.isLetter && char != ";" {
+            let committed = engine.commit() ?? ""
+            let mapped = Self.mapPunctuation(char)
+            commitBuffer = committed + mapped
+            return true
+        }
+
         commitBuffer = ""
         return engine.processKey(char)
+    }
+
+    private static func mapPunctuation(_ char: Character) -> String {
+        switch char {
+        case ",": return "\u{FF0C}"
+        case ".": return "\u{3002}"
+        case "?": return "\u{FF1F}"
+        case "!": return "\u{FF01}"
+        case ":": return "\u{FF1A}"
+        case "\"": return "\u{201C}"
+        case "'": return "\u{2018}"
+        case "(": return "\u{FF08}"
+        case ")": return "\u{FF09}"
+        default: return String(char)
+        }
     }
 
     public func inputKeyCode(_ keycode: Int32, modifier: Int32 = 0) -> Bool {
@@ -146,9 +170,9 @@ public class Rime {
         }
 
         if keycode == XK_Return || keycode == XK_KP_Enter {
-            let preedit = engine.preedit()
-            if !preedit.isEmpty {
-                commitBuffer = preedit
+            let raw = engine.rawInput()
+            if !raw.isEmpty {
+                commitBuffer = raw
                 engine.reset()
                 return true
             }
@@ -199,10 +223,8 @@ public class Rime {
 
     public func selectCandidate(index: Int) -> Bool {
         guard let engine = inputEngine else { return false }
-        let all = engine.candidates()
-        guard index < all.count else { return false }
-        commitBuffer = all[index].word
-        engine.reset()
+        guard let word = engine.select(index: index) else { return false }
+        commitBuffer = word
         return true
     }
 

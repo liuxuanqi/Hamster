@@ -506,7 +506,7 @@ public class KeyboardContext: ObservableObject {
 
   /// 划动阈值
   var distanceThreshold: CGFloat {
-    CGFloat(hamsterConfiguration?.swipe?.distanceThreshold ?? 20)
+    CGFloat(hamsterConfiguration?.swipe?.distanceThreshold ?? 40)
   }
 
   /// 滑动角度正切阈值
