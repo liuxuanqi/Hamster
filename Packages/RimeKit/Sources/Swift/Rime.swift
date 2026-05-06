@@ -215,6 +215,9 @@ public class Rime {
 
     public func getCandidate(index: Int, count: Int) -> [IRimeCandidate] {
         guard let engine = inputEngine else { return [] }
+        while index + count > engine.candidates().count && engine.hasMore {
+            _ = engine.loadMore()
+        }
         let all = engine.candidates()
         let end = min(index + count, all.count)
         guard index < all.count else { return [] }
@@ -230,6 +233,9 @@ public class Rime {
 
     public func candidateListWithIndex(index: Int, andCount count: Int) -> [CandidateWord] {
         guard let engine = inputEngine else { return [] }
+        while index + count > engine.candidates().count && engine.hasMore {
+            _ = engine.loadMore()
+        }
         let all = engine.candidates()
         let end = min(index + count, all.count)
         guard index < all.count else { return [] }
@@ -275,7 +281,7 @@ public class Rime {
             ctx.menu.numCandidates = Int32(candidates.count)
             ctx.menu.pageSize = 5
             ctx.menu.pageNo = 0
-            ctx.menu.isLastPage = candidates.count <= 5
+            ctx.menu.isLastPage = !engine.hasMore && candidates.count <= 5
             ctx.menu.highlightedCandidateIndex = 0
             if !candidates.isEmpty {
                 ctx.commitTextPreview = candidates[0].word
