@@ -348,7 +348,10 @@ public class Rime {
             return
         }
         do {
-            inputEngine = try InputEngine(dictURL: dictURL, englishURL: englishURL)
+            let docsDir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+            let userDictPath = docsDir.appendingPathComponent("user.db").path
+            logger.info("SimeEngine: userDictPath=\(userDictPath)")
+            inputEngine = try InputEngine(dictURL: dictURL, englishURL: englishURL, userDictPath: userDictPath)
         } catch {
             logger.error("SimeEngine init failed: \(error.localizedDescription)")
         }
