@@ -350,29 +350,33 @@ public class Rime {
         do {
             let docsDir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
             let userDictPath = docsDir.appendingPathComponent("user.db").path
-            logger.info("SimeEngine: userDictPath=\(userDictPath)")
-            inputEngine = try InputEngine(dictURL: dictURL, englishURL: englishURL, userDictPath: userDictPath)
+            let bigramURL = findFile("wanxiang", ext: "bigram.bin")
+            inputEngine = try InputEngine(dictURL: dictURL, englishURL: englishURL, userDictPath: userDictPath, bigramURL: bigramURL)
         } catch {
             logger.error("SimeEngine init failed: \(error.localizedDescription)")
         }
     }
 
     private func findDict(_ name: String) -> URL? {
+        return findFile(name, ext: "dict.bin")
+    }
+
+    private func findFile(_ name: String, ext: String) -> URL? {
         let sharedDir = traits?.sharedDataDir ?? ""
         if !sharedDir.isEmpty {
-            let url = URL(fileURLWithPath: sharedDir).appendingPathComponent("\(name).dict.bin")
+            let url = URL(fileURLWithPath: sharedDir).appendingPathComponent("\(name).\(ext)")
             if FileManager.default.fileExists(atPath: url.path) {
                 return url
             }
         }
         let userDir = traits?.userDataDir ?? ""
         if !userDir.isEmpty {
-            let url = URL(fileURLWithPath: userDir).appendingPathComponent("\(name).dict.bin")
+            let url = URL(fileURLWithPath: userDir).appendingPathComponent("\(name).\(ext)")
             if FileManager.default.fileExists(atPath: url.path) {
                 return url
             }
         }
-        if let url = Bundle.main.url(forResource: name, withExtension: "dict.bin") {
+        if let url = Bundle.main.url(forResource: name, withExtension: ext) {
             return url
         }
         return nil
