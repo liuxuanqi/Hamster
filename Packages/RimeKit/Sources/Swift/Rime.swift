@@ -364,9 +364,14 @@ public class Rime {
     private func findFile(_ name: String, ext: String) -> URL? {
         let sharedDir = traits?.sharedDataDir ?? ""
         if !sharedDir.isEmpty {
-            let url = URL(fileURLWithPath: sharedDir).appendingPathComponent("\(name).\(ext)")
+            let base = URL(fileURLWithPath: sharedDir)
+            let url = base.appendingPathComponent("\(name).\(ext)")
             if FileManager.default.fileExists(atPath: url.path) {
                 return url
+            }
+            let schemaURL = base.appendingPathComponent("schemas/wanxiang/\(name).\(ext)")
+            if FileManager.default.fileExists(atPath: schemaURL.path) {
+                return schemaURL
             }
         }
         let userDir = traits?.userDataDir ?? ""
