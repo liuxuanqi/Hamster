@@ -137,6 +137,17 @@ class CandidatesPagingCollectionView: UICollectionView {
         diffableDataSource.applySnapshotUsingReloadData(snapshot)
       }
       .store(in: &subscriptions)
+
+    rimeContext.$suggestions
+      .receive(on: DispatchQueue.main)
+      .sink { [weak self] suggestions in
+        guard let self = self else { return }
+        if suggestions.isEmpty, self.candidatesViewState != .collapse {
+          self.candidatesViewState = .collapse
+          self.keyboardContext.candidatesViewState = .collapse
+        }
+      }
+      .store(in: &subscriptions)
   }
 
   /// 显示 index 对应的 label
