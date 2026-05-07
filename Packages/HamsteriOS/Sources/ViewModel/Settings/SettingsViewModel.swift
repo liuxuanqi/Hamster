@@ -136,7 +136,7 @@ extension SettingsViewModel {
 
     // 首次启动始化输入方案目录
     do {
-      try FileManager.initSandboxUserDataDirectory(override: true, unzip: true)
+      try FileManager.initSandboxUserDataDirectory(override: true, unzip: false)
       try FileManager.initSandboxBackupDirectory(override: true)
     } catch {
       Logger.statistics.error("rime init file directory error: \(error.localizedDescription)")

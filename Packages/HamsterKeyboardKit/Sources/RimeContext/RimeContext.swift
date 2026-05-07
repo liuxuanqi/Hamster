@@ -393,7 +393,7 @@ public extension RimeContext {
     // 重置输入方案目录
     do {
       try FileManager.initSandboxSharedSupportDirectory(override: true)
-      try FileManager.initSandboxUserDataDirectory(override: true, unzip: true)
+      try FileManager.initSandboxUserDataDirectory(override: true, unzip: false)
     } catch {
       Logger.statistics.error("rime init file directory error: \(error.localizedDescription)")
       throw error

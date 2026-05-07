@@ -27,7 +27,6 @@
 		C0A602B32A185D88000DC924 /* HamsterKeyboardInputViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C000CA9D296EA72600EC5323 /* HamsterKeyboardInputViewController.swift */; };
 		C0C7EAEC29E5A236008D4EE1 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = C0C7EAEF29E5A236008D4EE1 /* InfoPlist.strings */; };
 		C0D672B429F1E0E7002D0439 /* SharedSupport.zip in Copy Rime SharedSupport */ = {isa = PBXBuildFile; fileRef = C0D672B329F1E066002D0439 /* SharedSupport.zip */; };
-		C0D856CC2B026FF6003DB275 /* rime-ice.zip in Copy Rime SharedSupport */ = {isa = PBXBuildFile; fileRef = C0D856CA2B026FDA003DB275 /* rime-ice.zip */; };
 		C0DA3F422AFB5AE9003E74DA /* RimeDeployBackgroundIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DA3F412AFB5AE9003E74DA /* RimeDeployBackgroundIntent.swift */; };
 /* End PBXBuildFile section */
 
@@ -65,7 +64,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 12;
 			files = (
-				C0D856CC2B026FF6003DB275 /* rime-ice.zip in Copy Rime SharedSupport */,
 				C0D672B429F1E0E7002D0439 /* SharedSupport.zip in Copy Rime SharedSupport */,
 			);
 			name = "Copy Rime SharedSupport";
@@ -118,7 +116,6 @@
 		C0C9041C2A56412200AF3F15 /* hamster.yaml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = hamster.yaml; sourceTree = "<group>"; };
 		C0D672B329F1E066002D0439 /* SharedSupport.zip */ = {isa = PBXFileReference; lastKnownFileType = archive.zip; path = SharedSupport.zip; sourceTree = "<group>"; };
 		C0D856C92B0213E5003DB275 /* HamsterDebug.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = HamsterDebug.entitlements; sourceTree = "<group>"; };
-		C0D856CA2B026FDA003DB275 /* rime-ice.zip */ = {isa = PBXFileReference; lastKnownFileType = archive.zip; path = "rime-ice.zip"; sourceTree = "<group>"; };
 		C0DA3F412AFB5AE9003E74DA /* RimeDeployBackgroundIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RimeDeployBackgroundIntent.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -287,7 +284,6 @@
 		C0D671B029F16D76002D0439 /* SharedSupport */ = {
 			isa = PBXGroup;
 			children = (
-				C0D856CA2B026FDA003DB275 /* rime-ice.zip */,
 				C0C9041C2A56412200AF3F15 /* hamster.yaml */,
 				C0D672B329F1E066002D0439 /* SharedSupport.zip */,
 			);
