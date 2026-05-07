@@ -245,7 +245,7 @@ public class Rime {
         s.schemaId = currentInputSchema
         s.schemaName = "微软双拼"
         s.isASCIIMode = session?.asciiMode ?? false
-        s.isComposing = !(session?.preedit.isEmpty ?? true)
+        s.isComposing = !(session?.preedit.isEmpty ?? true) || (session?.hasSuggestions ?? false)
         s.isSimplified = true
         return s
     }
@@ -255,7 +255,8 @@ public class Rime {
         guard let session = session else { return ctx }
 
         let preedit = session.preedit
-        if !preedit.isEmpty {
+        let hasCandidates = !preedit.isEmpty || session.hasSuggestions
+        if hasCandidates {
             ctx.composition.preedit = preedit
             ctx.composition.length = Int32(preedit.count)
             ctx.composition.cursorPos = Int32(preedit.count)

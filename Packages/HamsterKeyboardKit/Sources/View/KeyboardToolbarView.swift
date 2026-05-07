@@ -164,7 +164,7 @@ class KeyboardToolbarView: NibLessView {
       .receive(on: DispatchQueue.main)
       .sink { [weak self] in
         guard let self = self else { return }
-        let isEmpty = $0.isEmpty
+        let isEmpty = $0.isEmpty && self.rimeContext.suggestions.isEmpty
         self.commonFunctionBar.isHidden = !isEmpty
         self.candidateBarView.isHidden = isEmpty
 
