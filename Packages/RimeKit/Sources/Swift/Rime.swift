@@ -335,7 +335,8 @@ public class Rime {
             let docsDir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
             let userDictPath = docsDir.appendingPathComponent("user.db").path
             let bigramURL = findFile("wanxiang", ext: "bigram.bin")
-            let engine = try InputEngine(dictURL: dictURL, englishURL: englishURL, userDictPath: userDictPath, bigramURL: bigramURL)
+            let wordBigramURL = findFile("wanxiang", ext: "wordbigram.bin")
+            let engine = try InputEngine(dictURL: dictURL, englishURL: englishURL, userDictPath: userDictPath, bigramURL: bigramURL, wordBigramURL: wordBigramURL)
             session = SimeSession(engine: engine)
         } catch {
             logger.error("SimeEngine init failed: \(error.localizedDescription)")
