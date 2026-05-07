@@ -110,16 +110,7 @@ extension MainViewController {
     mainViewModel.shortcutItemTypePublished
       .receive(on: DispatchQueue.main)
       .sink { [unowned self] type in
-        Task {
-          switch type {
-          case .rimeDeploy:
-            await rimeViewController.rimeViewModel.rimeDeploy()
-          case .rimeSync:
-            await rimeViewController.rimeViewModel.rimeSync()
-          default:
-            break
-          }
-        }
+        // No-op: RIME shortcuts removed
       }
       .store(in: &subscriptions)
   }
@@ -139,24 +130,12 @@ extension MainViewController: UISplitViewControllerDelegate {
 extension MainViewController {
   func navigationResponse(to subView: SettingsSubView) {
     switch subView {
-    case .inputSchema:
-      presentInputSchemaViewController()
-    case .finder:
-      presentFinderViewController()
-    case .uploadInputSchema:
-      presentUploadInputSchemaViewController()
     case .keyboardSettings:
       presentKeyboardSettingsViewController()
     case .colorSchema:
       presentKeyboardColorViewController()
     case .feedback:
       presentKeyboardFeedbackViewController()
-    case .rime:
-      presentRimeViewController()
-    case .backup:
-      presentBackupViewController()
-    case .iCloud:
-      presentAppleCloudViewController()
     case .about:
       presentAboutViewController()
     case .main:

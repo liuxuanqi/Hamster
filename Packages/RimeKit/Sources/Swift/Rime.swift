@@ -2,6 +2,7 @@ import Foundation
 import HamsterKit
 import os
 import SimeEngine
+import SimeSession
 
 public class Rime {
     private let logger = Logger(
@@ -11,19 +12,15 @@ public class Rime {
 
     public static let shared: Rime = .init()
 
-    private var inputEngine: InputEngine?
+    private var session: SimeSession?
     private var isFirstRun = true
     private var traits: IRimeTraits?
-    private var session: RimeSessionId = 0
     private var currentInputSchema: String = "mspy"
-    private var currentSimplifiedModeKey: String = ""
-    private var currentSimplifiedModeValue: Bool = false
-    private var asciiMode: Bool = false
     private var commitBuffer: String = ""
 
-    private let rimeAPI = IRimeAPI()
-
     private weak var notificationDelegate: IRimeNotificationDelegate?
+
+    private let rimeAPI = IRimeAPI()
 
     private init() {}
 
@@ -72,7 +69,7 @@ public class Rime {
             try? FileManager.default.createDirectory(at: buildDir, withIntermediateDirectories: true)
         }
 
-        loadEngine()
+        loadSession()
     }
 
     public func deploy(_ traits: IRimeTraits? = nil) -> Bool {
@@ -82,27 +79,26 @@ public class Rime {
     }
 
     public func isRunning() -> Bool {
-        return session != 0
+        return session != nil
     }
 
     public func shutdown() {
-        inputEngine = nil
-        session = 0
+        session = nil
     }
 
     public func getSession() -> RimeSessionId {
-        return session
+        return session != nil ? 1 : 0
     }
 
     public func createSession() {
-        if !isRunning() {
-            loadEngine()
-            session = 1
+        if session == nil {
+            loadSession()
         }
     }
 
     public func restSession() {
-        inputEngine?.reset()
+        session?.reset()
+        session?.engine.clearHistory()
         commitBuffer = ""
     }
 
@@ -111,76 +107,59 @@ public class Rime {
     }
 
     public func simplifiedChineseMode(key: String) -> Bool {
-        return currentSimplifiedModeValue
+        return false
     }
 
-    public func setSimplifiedChineseMode(key: String, value: Bool) {
-        currentSimplifiedModeKey = key
-        currentSimplifiedModeValue = value
-    }
+    public func setSimplifiedChineseMode(key: String, value: Bool) {}
 
     public func inputKey(_ key: String) -> Bool {
         createSession()
-        guard let engine = inputEngine, let char = key.first, key.count == 1 else { return false }
+        guard let session = session, let char = key.first, key.count == 1 else { return false }
 
         if char == " " {
-            if let text = engine.commit() {
+            let result = session.handle(.commit)
+            if case .committed(let text) = result {
                 commitBuffer = text
                 return true
             }
             return false
         }
 
-        // Punctuation while composing → commit first candidate + append punctuation
-        let isComposing = !engine.preedit().isEmpty
-        if isComposing && !char.isLetter && char != ";" {
-            let committed = engine.commit() ?? ""
-            let mapped = Self.mapPunctuation(char)
-            commitBuffer = committed + mapped
-            return true
+        if !char.isLetter && char != ";" {
+            let result = session.handle(.punctuation(char))
+            if case .committed(let text) = result {
+                commitBuffer = text
+                return true
+            }
+            return false
         }
 
         commitBuffer = ""
-        return engine.processKey(char)
-    }
-
-    private static func mapPunctuation(_ char: Character) -> String {
-        switch char {
-        case ",": return "\u{FF0C}"
-        case ".": return "\u{3002}"
-        case "?": return "\u{FF1F}"
-        case "!": return "\u{FF01}"
-        case ":": return "\u{FF1A}"
-        case "\"": return "\u{201C}"
-        case "'": return "\u{2018}"
-        case "(": return "\u{FF08}"
-        case ")": return "\u{FF09}"
-        default: return String(char)
-        }
+        let result = session.handle(.key(char))
+        return result != .passThrough
     }
 
     public func inputKeyCode(_ keycode: Int32, modifier: Int32 = 0) -> Bool {
         createSession()
-        guard let engine = inputEngine else { return false }
+        guard let session = session else { return false }
 
         if keycode == XK_BackSpace {
-            engine.backspace()
+            let result = session.handle(.backspace)
             commitBuffer = ""
-            return true
+            return result != .passThrough
         }
 
         if keycode == XK_Return || keycode == XK_KP_Enter {
-            let raw = engine.rawInput()
-            if !raw.isEmpty {
-                commitBuffer = raw
-                engine.reset()
+            let result = session.handle(.commitRaw)
+            if case .committed(let text) = result {
+                commitBuffer = text
                 return true
             }
             return false
         }
 
         if keycode == XK_Escape {
-            engine.reset()
+            session.handle(.clearSession)
             commitBuffer = ""
             return true
         }
@@ -198,52 +177,55 @@ public class Rime {
     }
 
     public func candidateList() -> [CandidateWord] {
-        guard let engine = inputEngine else { return [] }
-        return engine.candidates().map {
+        guard let session = session else { return [] }
+        return session.candidates.map {
             CandidateWord(text: $0.word, comment: $0.pinyin)
         }
     }
 
     public func isAsciiMode() -> Bool {
-        return asciiMode
+        return session?.asciiMode ?? false
     }
 
     public func asciiMode(_ value: Bool) {
-        asciiMode = value
+        session?.asciiMode = value
         notificationDelegate?.onChangeMode(value ? "ascii_mode" : "!ascii_mode")
     }
 
     public func getCandidate(index: Int, count: Int) -> [IRimeCandidate] {
-        guard let engine = inputEngine else { return [] }
-        while index + count > engine.candidates().count && engine.hasMore {
-            _ = engine.loadMore()
+        guard let session = session else { return [] }
+        while index + count > session.candidates.count && session.hasMore {
+            session.loadMore()
         }
-        let all = engine.candidates()
+        let all = session.candidates
         let end = min(index + count, all.count)
         guard index < all.count else { return [] }
         return all[index..<end].map { IRimeCandidate(text: $0.word, comment: $0.pinyin) }
     }
 
     public func selectCandidate(index: Int) -> Bool {
-        guard let engine = inputEngine else { return false }
-        guard let word = engine.select(index: index) else { return false }
-        commitBuffer = word
-        return true
+        guard let session = session else { return false }
+        let result = session.handle(.select(index))
+        if case .committed(let text) = result {
+            commitBuffer = text
+            return true
+        }
+        return result == .updated
     }
 
     public func candidateListWithIndex(index: Int, andCount count: Int) -> [CandidateWord] {
-        guard let engine = inputEngine else { return [] }
-        while index + count > engine.candidates().count && engine.hasMore {
-            _ = engine.loadMore()
+        guard let session = session else { return [] }
+        while index + count > session.candidates.count && session.hasMore {
+            session.loadMore()
         }
-        let all = engine.candidates()
+        let all = session.candidates
         let end = min(index + count, all.count)
         guard index < all.count else { return [] }
         return all[index..<end].map { CandidateWord(text: $0.word, comment: $0.pinyin) }
     }
 
     public func getInputKeys() -> String {
-        return inputEngine?.preedit() ?? ""
+        return session?.preedit ?? ""
     }
 
     public func getCommitText() -> String {
@@ -253,7 +235,8 @@ public class Rime {
     }
 
     public func cleanComposition() {
-        inputEngine?.reset()
+        session?.reset()
+        session?.engine.clearHistory()
         commitBuffer = ""
     }
 
@@ -261,27 +244,27 @@ public class Rime {
         let s = IRimeStatus()
         s.schemaId = currentInputSchema
         s.schemaName = "微软双拼"
-        s.isASCIIMode = asciiMode
-        s.isComposing = !(inputEngine?.preedit().isEmpty ?? true)
+        s.isASCIIMode = session?.asciiMode ?? false
+        s.isComposing = !(session?.preedit.isEmpty ?? true)
         s.isSimplified = true
         return s
     }
 
     public func context() -> IRimeContext {
         let ctx = IRimeContext()
-        guard let engine = inputEngine else { return ctx }
+        guard let session = session else { return ctx }
 
-        let preedit = engine.preedit()
+        let preedit = session.preedit
         if !preedit.isEmpty {
             ctx.composition.preedit = preedit
             ctx.composition.length = Int32(preedit.count)
             ctx.composition.cursorPos = Int32(preedit.count)
 
-            let candidates = engine.candidates()
+            let candidates = session.candidates
             ctx.menu.numCandidates = Int32(candidates.count)
             ctx.menu.pageSize = 5
             ctx.menu.pageNo = 0
-            ctx.menu.isLastPage = !engine.hasMore && candidates.count <= 5
+            ctx.menu.isLastPage = !session.hasMore && candidates.count <= 5
             ctx.menu.highlightedCandidateIndex = 0
             if !candidates.isEmpty {
                 ctx.commitTextPreview = candidates[0].word
@@ -322,7 +305,7 @@ public class Rime {
     }
 
     public func getCaretPosition() -> Int {
-        return inputEngine?.preedit().count ?? 0
+        return session?.preedit.count ?? 0
     }
 
     public func setCaretPosition(_ position: Int) {}
@@ -340,8 +323,8 @@ public class Rime {
 
     // MARK: - Private
 
-    private func loadEngine() {
-        guard inputEngine == nil else { return }
+    private func loadSession() {
+        guard session == nil else { return }
         guard let dictURL = findDict("wanxiang"),
               let englishURL = findDict("wanxiang_english") else {
             logger.warning("SimeEngine: dict files not found, engine not loaded")
@@ -351,7 +334,8 @@ public class Rime {
             let docsDir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
             let userDictPath = docsDir.appendingPathComponent("user.db").path
             let bigramURL = findFile("wanxiang", ext: "bigram.bin")
-            inputEngine = try InputEngine(dictURL: dictURL, englishURL: englishURL, userDictPath: userDictPath, bigramURL: bigramURL)
+            let engine = try InputEngine(dictURL: dictURL, englishURL: englishURL, userDictPath: userDictPath, bigramURL: bigramURL)
+            session = SimeSession(engine: engine)
         } catch {
             logger.error("SimeEngine init failed: \(error.localizedDescription)")
         }
@@ -386,9 +370,4 @@ public class Rime {
         }
         return nil
     }
-}
-
-extension Rime {
-    private static let asciiModeKey = "ascii_mode"
-    private static let simplifiedChineseKey = "simplification"
 }

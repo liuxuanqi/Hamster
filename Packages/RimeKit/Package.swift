@@ -21,6 +21,7 @@ let package = Package(
       dependencies: [
         "HamsterKit",
         .product(name: "SimeEngine", package: "Sime"),
+        .product(name: "SimeSession", package: "Sime"),
       ],
       path: "Sources/Swift"),
     .testTarget(

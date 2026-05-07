@@ -426,6 +426,16 @@ public class KeyboardSettingsViewModel: ObservableObject, Hashable, Identifiable
     }
   }
 
+  public var swipeDistanceThreshold: Int {
+    get {
+      HamsterAppDependencyContainer.shared.configuration.swipe?.distanceThreshold ?? 40
+    }
+    set {
+      HamsterAppDependencyContainer.shared.configuration.swipe?.distanceThreshold = newValue
+      HamsterAppDependencyContainer.shared.applicationConfiguration.swipe?.distanceThreshold = newValue
+    }
+  }
+
   public var maximumNumberOfCandidateWords: Int {
     get {
       HamsterAppDependencyContainer.shared.configuration.rime?.maximumNumberOfCandidateWords ?? 100
@@ -1197,6 +1207,20 @@ public class KeyboardSettingsViewModel: ObservableObject, Hashable, Identifiable
           stepValue: 1,
           valueChangeHandled: { [unowned self] in
             spaceDragSensitivity = Int($0)
+          })
+      ]),
+    .init(
+      footer: "上滑触发距离: 手指需要滑动多少个点才能触发上滑操作。数值越小越灵敏，越大越不容易误触。",
+      items: [
+        .init(
+          text: "上滑触发距离",
+          type: .step,
+          textValue: { [unowned self] in String(swipeDistanceThreshold) },
+          minValue: 10,
+          maxValue: 80,
+          stepValue: 5,
+          valueChangeHandled: { [unowned self] in
+            swipeDistanceThreshold = Int($0)
           })
       ])
   ]

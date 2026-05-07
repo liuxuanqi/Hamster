@@ -24,6 +24,11 @@ public class SettingsViewModel: ObservableObject {
     self.backupViewModel = backupViewModel
   }
 
+  public var enableAppleCloud: Bool {
+    get { false }
+    set {}
+  }
+
   public var enableColorSchema: Bool {
     get {
       HamsterAppDependencyContainer.shared.configuration.keyboard?.enableColorSchema ?? false
@@ -34,101 +39,21 @@ public class SettingsViewModel: ObservableObject {
     }
   }
 
-  public var enableAppleCloud: Bool {
-    get {
-      HamsterAppDependencyContainer.shared.configuration.general?.enableAppleCloud ?? false
-    }
-    set {
-      HamsterAppDependencyContainer.shared.configuration.general?.enableAppleCloud = newValue
-      HamsterAppDependencyContainer.shared.applicationConfiguration.general?.enableAppleCloud = newValue
-    }
-  }
 
   var tableReloadSubject = PassthroughSubject<Bool, Never>()
   var tableReloadPublished: AnyPublisher<Bool, Never> {
     tableReloadSubject.eraseToAnyPublisher()
   }
 
-  func reloadFavoriteButton() {
-    let favoriteButtonSettings = getFavoriteButtons(buttons: UserDefaults.standard.getFavoriteButtons())
-    guard !favoriteButtonSettings.isEmpty else { return }
-
-    let sectionsContainerFavoriteButtons = sections[0].items[0].type == .button
-    if sectionsContainerFavoriteButtons {
-      sections[0].items = favoriteButtonSettings
-    } else {
-      sections = [SettingSectionModel(items: favoriteButtonSettings)] + sections
-    }
-  }
+  func reloadFavoriteButton() {}
 
   func getFavoriteButtons(buttons: [FavoriteButton]) -> [SettingItemModel] {
-    // 检测是否有收藏按钮，如果有则添加到初始化数据 settingsViewModel.sections 中
-    // 注意：后续的动态变化将在 combine() 方法中，通过观测 UserDefaults.favoriteButtonSubject 值完成
-    guard !buttons.isEmpty else { return [] }
-    return buttons
-      .compactMap {
-        switch $0 {
-        case .rimeDeploy: return SettingItemModel(
-            text: "重新部署",
-            type: .button,
-            buttonAction: { [weak self] in
-              guard let self = self else { return }
-              await rimeViewModel.rimeDeploy()
-              tableReloadSubject.send(true)
-            },
-            favoriteButton: .rimeDeploy
-          )
-        case .rimeSync: return SettingItemModel(
-            text: "RIME同步",
-            type: .button,
-            buttonAction: { [weak self] in
-              guard let self = self else { return }
-              await rimeViewModel.rimeSync()
-            },
-            favoriteButton: .rimeSync
-          )
-        case .appBackup: return SettingItemModel(
-            text: "应用备份",
-            type: .button,
-            buttonAction: { [weak self] in
-              guard let self = self else { return }
-              await backupViewModel.backup()
-            },
-            favoriteButton: .rimeSync
-          )
-        }
-      }
+    return []
   }
 
   /// 设置选项
   public lazy var sections: [SettingSectionModel] = {
     let sections = [
-      SettingSectionModel(title: "输入相关", items: [
-        .init(
-          icon: UIImage(systemName: "highlighter")!.withTintColor(.yellow),
-          text: "输入方案设置",
-          accessoryType: .disclosureIndicator,
-          navigationAction: { [unowned self] in
-            self.mainViewModel.subViewSubject.send(.inputSchema)
-          }
-        ),
-        .init(
-          icon: UIImage(systemName: "wifi")!,
-          text: "Wi-Fi上传方案",
-          accessoryType: .disclosureIndicator,
-          navigationAction: { [unowned self] in
-            self.mainViewModel.subViewSubject.send(.uploadInputSchema)
-          }
-        ),
-        .init(
-          icon: UIImage(systemName: "folder")!,
-          text: "文件管理",
-          accessoryType: .disclosureIndicator,
-          navigationAction: { [unowned self] in
-            self.mainViewModel.subViewSubject.send(.finder)
-          }
-        ),
-      ]),
       SettingSectionModel(title: "键盘相关", items: [
         .init(
           icon: UIImage(systemName: "keyboard")!,
@@ -153,35 +78,6 @@ public class SettingsViewModel: ObservableObject {
           accessoryType: .disclosureIndicator,
           navigationAction: { [unowned self] in
             self.mainViewModel.subViewSubject.send(.feedback)
-          }
-        ),
-      ]),
-      SettingSectionModel(title: "同步与备份", items: [
-        .init(
-          icon: UIImage(systemName: "externaldrive.badge.icloud")!,
-          text: "iCloud同步",
-          accessoryType: .disclosureIndicator,
-          navigationLinkLabel: { [unowned self] in enableAppleCloud ? "启用" : "禁用" },
-          navigationAction: { [unowned self] in
-            self.mainViewModel.subViewSubject.send(.iCloud)
-          }
-        ),
-        .init(
-          icon: UIImage(systemName: "externaldrive.badge.timemachine")!,
-          text: "软件备份",
-          accessoryType: .disclosureIndicator,
-          navigationAction: { [unowned self] in
-            self.mainViewModel.subViewSubject.send(.backup)
-          }
-        ),
-      ]),
-      .init(title: "RIME", items: [
-        .init(
-          icon: UIImage(systemName: "r.square")!,
-          text: "RIME",
-          accessoryType: .disclosureIndicator,
-          navigationAction: { [unowned self] in
-            self.mainViewModel.subViewSubject.send(.rime)
           }
         ),
       ]),
