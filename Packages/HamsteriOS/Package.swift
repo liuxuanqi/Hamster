@@ -15,8 +15,6 @@ let package = Package(
   ],
   dependencies: [
     .package(url: "https://github.com/relatedcode/ProgressHUD.git", exact: "14.1.0"),
-    .package(url: "https://github.com/simonbs/Runestone.git", exact: "0.5.2"),
-    .package(url: "https://github.com/simonbs/TreeSitterLanguages.git", exact: "0.1.10"),
     .package(path: "../HamsterUIKit"),
     .package(path: "../HamsterKit"),
     .package(path: "../RimeKit"),
@@ -27,13 +25,6 @@ let package = Package(
     .target(
       name: "HamsteriOS",
       dependencies: [
-        "Runestone",
-        .product(name: "TreeSitterLua", package: "TreeSitterLanguages"),
-        .product(name: "TreeSitterLuaQueries", package: "TreeSitterLanguages"),
-        .product(name: "TreeSitterLuaRunestone", package: "TreeSitterLanguages"),
-        .product(name: "TreeSitterYAML", package: "TreeSitterLanguages"),
-        .product(name: "TreeSitterYAMLQueries", package: "TreeSitterLanguages"),
-        .product(name: "TreeSitterYAMLRunestone", package: "TreeSitterLanguages"),
         "ProgressHUD",
         "HamsterUIKit",
         "HamsterKit",
