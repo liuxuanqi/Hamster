@@ -219,55 +219,18 @@ public extension RimeContext {
 public extension RimeContext {
   /// 设置用户输入方案
   func setupRimeInputSchema() {
-    let schema: RimeSchema
-    if let currentSchema = currentSchema {
-      schema = currentSchema
-    } else {
-      guard let currentSchema = selectSchemas.first else {
-        Logger.statistics.error("rime select schemas is empty.")
-        return
-      }
-      schema = currentSchema
-    }
-    let handle = Rime.shared.setSchema(schema.schemaId)
-    Logger.statistics.info("self.rimeEngine set schema: \(schema.schemaName), handle = \(handle)")
+    Logger.statistics.info("setupRimeInputSchema: single schema (wanxiang)")
   }
 
   /// 切换最近一次输入方案
   @MainActor
   func switchLatestInputSchema() {
-    let latestSchema: RimeSchema
-    if let schema = self.latestSchema {
-      latestSchema = schema
-    } else {
-      // 过滤掉当前输入方案，取第一个方案为上个方案
-      let selectSchemas = selectSchemas.filter { $0.schemaId != self.currentSchema?.schemaId }
-      guard selectSchemas.count > 0 else {
-        Logger.statistics.error("rime select schemas count less than 1.")
-        return
-      }
-      latestSchema = selectSchemas[0]
-    }
-    let handle = Rime.shared.setSchema(latestSchema.schemaId)
-    Logger.statistics.info("self.rimeEngine set latest schema: \(latestSchema.schemaName), handle = \(handle)")
-    if handle {
-      self.latestSchema = self.currentSchema
-      self.currentSchema = latestSchema
-    }
     self.reset()
   }
 
-  /// 触发 RIME 的 switcher
+  /// 触发 RIME 的 switcher（sime 单方案，无操作）
   @MainActor
-  func switcher() {
-    guard !hotKeys.isEmpty else { return }
-    let hotkey = hotKeys[0] // 取第一个
-    let hotKeyCode = RimeContext.hotKeyCodeMapping[hotkey, default: XK_F4]
-    let hotKeyModifier = RimeContext.hotKeyCodeModifiersMapping[hotkey, default: Int32(0)]
-    Logger.statistics.info("rimeSwitcher hotkey = \(hotkey), hotkeyCode = \(hotKeyCode), modifier = \(hotKeyModifier)")
-    _ = Rime.shared.inputKeyCode(hotKeyCode, modifier: hotKeyModifier)
-    syncContext()
-  }
+  func switcher() {}
 
   /// 根据索引选择候选字
   @MainActor

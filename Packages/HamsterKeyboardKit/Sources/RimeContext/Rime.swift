@@ -14,7 +14,6 @@ public class Rime {
 
     private var session: SimeSession?
     private var traits: IRimeTraits?
-    private var currentInputSchema: String = "mspy"
     private var commitBuffer: String = ""
 
     private weak var notificationDelegate: IRimeNotificationDelegate?
@@ -160,8 +159,8 @@ public class Rime {
 
     public func status() -> IRimeStatus {
         let s = IRimeStatus()
-        s.schemaId = currentInputSchema
-        s.schemaName = "微软双拼"
+        s.schemaId = "wanxiang"
+        s.schemaName = "万象"
         s.isASCIIMode = session?.asciiMode ?? false
         s.isComposing = !(session?.preedit.isEmpty ?? true) || (session?.hasSuggestions ?? false)
         s.isSimplified = true
@@ -194,8 +193,6 @@ public class Rime {
     }
 
     public func setSchema(_ schemaId: String) -> Bool {
-        createSession()
-        currentInputSchema = schemaId
         return true
     }
 
