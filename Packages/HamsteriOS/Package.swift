@@ -17,7 +17,6 @@ let package = Package(
     .package(url: "https://github.com/relatedcode/ProgressHUD.git", exact: "14.1.0"),
     .package(path: "../HamsterUIKit"),
     .package(path: "../HamsterKit"),
-    .package(path: "../RimeKit"),
     .package(path: "../HamsterKeyboardKit"),
   ],
   targets: [
@@ -28,7 +27,6 @@ let package = Package(
         "HamsterUIKit",
         "HamsterKit",
         "HamsterKeyboardKit",
-        .product(name: "RimeKit", package: "RimeKit"),
       ],
       path: "Sources",
       resources: [.process("Resources")]
