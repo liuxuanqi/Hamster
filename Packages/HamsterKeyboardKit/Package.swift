@@ -15,9 +15,8 @@ let package = Package(
   dependencies: [
     .package(path: "../HamsterKit"),
     .package(path: "../HamsterUIKit"),
-    .package(path: "../RimeKit"),
+    .package(path: "../../../sime"),
     .package(url: "https://github.com/weichsel/ZIPFoundation.git", exact: "0.9.16"),
-    .package(url: "https://github.com/jpsim/Yams.git", exact: "5.0.6"),
   ],
   targets: [
     .target(
@@ -25,8 +24,8 @@ let package = Package(
       dependencies: [
         "HamsterKit",
         "HamsterUIKit",
-        "RimeKit",
-        "Yams",
+        .product(name: "SimeEngine", package: "Sime"),
+        .product(name: "SimeSession", package: "Sime"),
       ],
       path: "Sources",
       resources: [.process("Resources")]),
@@ -34,11 +33,9 @@ let package = Package(
       name: "HamsterKeyboardKitTests",
       dependencies: [
         "HamsterKeyboardKit",
-        "Yams",
         "HamsterKit",
         "HamsterUIKit",
         "ZIPFoundation",
-        "RimeKit",
       ],
       path: "Tests"),
   ])

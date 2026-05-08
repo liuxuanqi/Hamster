@@ -85,7 +85,7 @@ public class SettingsViewModel: ObservableObject {
             let appConfig = HamsterAppDependencyContainer.shared.applicationConfiguration
             let url = FileManager.hamsterAppConfigFileOnUserData
             do {
-              try HamsterConfigurationRepositories.shared.saveToYAML(config: appConfig, path: url)
+              try HamsterConfigurationRepositories.shared.saveToJSON(config: appConfig, path: url)
               self.exportConfigurationSubject.send(url)
             } catch {
               await ProgressHUD.failed("导出设置失败")

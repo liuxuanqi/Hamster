@@ -1369,30 +1369,10 @@ extension KeyboardSettingsViewModel {
       }
     }
 
-    // 加载自定义键盘配置文件
+    // 加载自定义键盘配置文件 (YAML import removed)
     do {
-      let keyboards = try HamsterConfigurationRepositories.shared.loadCustomizerKeyboardLayoutYAML(fileURL)
-
-      // 停止读取url文件
       if needAccessingSecurity { fileURL.stopAccessingSecurityScopedResource() }
-
-      // 内置键盘
-      // 注意：.filter 会过滤掉与导入键盘名称相同的键盘
-      let originalKeyboards = (HamsterAppDependencyContainer.shared.configuration.keyboards ?? [])
-        .filter {
-          for importKeyboard in keyboards.keyboards {
-            if importKeyboard.type == $0.type {
-              return false
-            }
-          }
-          return true
-        }
-
-      HamsterAppDependencyContainer.shared.configuration.keyboards = originalKeyboards + keyboards.keyboards
-      HamsterAppDependencyContainer.shared.applicationConfiguration.keyboards = originalKeyboards + keyboards.keyboards
-
-      await ProgressHUD.success("导入成功", interaction: false, delay: 1.5)
-      reloadRootViewSubject.send(true)
+      throw "自定义键盘导入功能已移除"
     } catch {
       Logger.statistics.error("importCustomizeKeyboardLayout error: \(error)")
       await ProgressHUD.failed("自定义键盘配置文件加载失败", interaction: false, delay: 1.5)

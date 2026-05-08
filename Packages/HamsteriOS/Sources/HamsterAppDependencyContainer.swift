@@ -100,7 +100,7 @@ open class HamsterAppDependencyContainer {
         try FileManager.initSandboxSharedSupportDirectory(override: true)
         try FileManager.initSandboxUserDataDirectory(override: true, unzip: false)
         try FileManager.syncSandboxSharedSupportDirectoryToAppGroup(override: true)
-        let hamsterConfiguration = try HamsterConfigurationRepositories.shared.loadFromYAML(FileManager.hamsterConfigFileOnSandboxSharedSupport)
+        let hamsterConfiguration = try HamsterConfigurationRepositories.shared.loadFromPropertyList(FileManager.hamsterConfigFileOnSandboxSharedSupport.deletingLastPathComponent().appendingPathComponent("hamster.plist"))
         try HamsterConfigurationRepositories.shared.saveToUserDefaultsOnDefault(hamsterConfiguration)
         self.configuration = hamsterConfiguration
         // didSet not fired during init — explicitly write plist
@@ -136,7 +136,7 @@ open class HamsterAppDependencyContainer {
       }
     } catch {
       Logger.statistics.error("load configuration from UserDefault error: \(error.localizedDescription)")
-      if let hamsterConfiguration = try? HamsterConfigurationRepositories.shared.loadFromYAML(FileManager.hamsterConfigFileOnSandboxSharedSupport) {
+      if let hamsterConfiguration = try? HamsterConfigurationRepositories.shared.loadFromPropertyList(FileManager.hamsterConfigFileOnSandboxSharedSupport.deletingLastPathComponent().appendingPathComponent("hamster.plist")) {
         self.configuration = hamsterConfiguration
       } else {
         self.configuration = HamsterConfiguration()

@@ -9,7 +9,8 @@ import Combine
 import Foundation
 import HamsterKit
 import OSLog
-import RimeKit
+import SimeEngine
+import SimeSession
 
 /// RIME 运行时上下文
 public class RimeContext {
