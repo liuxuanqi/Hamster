@@ -184,6 +184,10 @@ extension CandidatesPagingCollectionView: UICollectionViewDelegate {
     // 用于触发反馈
     actionHandler.handle(.press, on: .character(""))
     self.rimeContext.selectCandidate(index: indexPath.item)
+    if !candidatesViewState.isCollapse() {
+      candidatesViewState = .collapse
+      keyboardContext.candidatesViewState = .collapse
+    }
   }
 
   public func collectionView(_ collectionView: UICollectionView, didHighlightItemAt indexPath: IndexPath) {
