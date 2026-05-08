@@ -47,11 +47,6 @@ public class HamsterConfigurationRepositories {
     try saveToUserDefaults(config, key: Self.defaultHamsterConfigurationKey)
   }
 
-  /// 在 UserDefaults 中保存 UI 界面中操作的配置
-  public func saveAppConfigurationToUserDefaults(_ config: HamsterConfiguration) throws {
-    try saveToUserDefaults(config, key: Self.hamsterAppConfigurationKey)
-  }
-
   private func saveToUserDefaults(_ config: HamsterConfiguration, key: String) throws {
     let data = try JSONEncoder().encode(config)
     UserDefaults.hamster.setValue(data, forKey: key)
@@ -61,10 +56,6 @@ public class HamsterConfigurationRepositories {
     guard let data = UserDefaults.hamster.data(forKey: key) else { throw "load HamsterConfiguration from UserDefault is empty." }
     return try JSONDecoder().decode(HamsterConfiguration.self, from: data)
     // return try ZippyJSONDecoder().decode(HamsterConfiguration.self, from: data)
-  }
-
-  public func loadAppConfigurationFromUserDefaults() throws -> HamsterConfiguration {
-    try loadConfigFromUserDefaults(key: Self.hamsterAppConfigurationKey)
   }
 
   /// 从 UserDefaults 中获取应用配置
@@ -87,37 +78,18 @@ public class HamsterConfigurationRepositories {
 
   /// 按优先级读取配置文件
   public func loadConfiguration() throws -> HamsterConfiguration {
-    var configuration = HamsterConfiguration()
-
     let plistPath = FileManager.hamsterConfigFileOnSandboxSharedSupport.deletingLastPathComponent().appendingPathComponent("hamster.plist")
-    if FileManager.default.fileExists(atPath: plistPath.path) {
-      configuration = try loadFromPropertyList(plistPath)
-    }
-
-    // 读取 UI 操作产生的配置（存储在 UserDefaults 中, 如果存在，并对相异的配置做 merge 合并。
-    if let appConfig = try? HamsterConfigurationRepositories.shared.loadAppConfigurationFromUserDefaults() {
-      configuration = try configuration.merge(with: appConfig, uniquingKeysWith: { _, buildValue in buildValue })
-    }
-
-    return configuration
-  }
-
-  /// 清空 UI 交互生成的配置
-  public func resetAppConfiguration() {
-    UserDefaults.hamster.removeObject(forKey: Self.hamsterAppConfigurationKey)
+    return try loadFromPropertyList(plistPath)
   }
 
   /// 清空应用配置（包含默认的应用配置）
   public func resetConfiguration() {
-    UserDefaults.hamster.removeObject(forKey: Self.hamsterAppConfigurationKey)
     UserDefaults.hamster.removeObject(forKey: Self.hamsterConfigurationKey)
     UserDefaults.hamster.removeObject(forKey: Self.defaultHamsterConfigurationKey)
   }
 }
 
 public extension HamsterConfigurationRepositories {
-  /// UI操作生成的配置
-  static let hamsterAppConfigurationKey = "com.ihsiao.apps.Hamster.configuration.keys.hamsterAppConfig"
   /// 应用配置key
   static let hamsterConfigurationKey = "com.ihsiao.apps.Hamster.configuration.keys.hamsterConfig"
   /// 默认应用配置key

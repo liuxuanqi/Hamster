@@ -30,7 +30,8 @@ open class HamsterAppDependencyContainer {
     KeyboardSettingsViewModel()
   }()
 
-  /// 应用配置
+  /// 应用配置 — single source of truth
+  /// didSet writes to UserDefaults + plist for keyboard extension
   public var configuration: HamsterConfiguration {
     didSet {
       Task {
@@ -52,34 +53,10 @@ open class HamsterAppDependencyContainer {
     }
   }
 
-  /// 在 app 内设置的的配置项
-  public var applicationConfiguration: HamsterConfiguration = {
-    if let config = try? HamsterConfigurationRepositories.shared.loadAppConfigurationFromUserDefaults() {
-      return config
-    }
-    var config = HamsterConfiguration(
-      general: GeneralConfiguration(),
-      toolbar: KeyboardToolbarConfiguration(
-        heightOfToolbar: 58,
-        heightOfCodingArea: 20,
-        codingAreaFontSize: 20,
-        candidateWordFontSize: 20
-      ),
-      keyboard: KeyboardConfiguration(enableEmbeddedInputMode: false),
-      rime: RimeConfiguration(),
-      swipe: KeyboardSwipeConfiguration(distanceThreshold: 80),
-      keyboards: nil
-    )
-    config.keyboard?.keyboardRowHeight = 58
-    return config
-  }() {
-    didSet {
-      do {
-        try HamsterConfigurationRepositories.shared.saveAppConfigurationToUserDefaults(applicationConfiguration)
-      } catch {
-        Logger.statistics.error("hamster app configuration set error: \(error.localizedDescription)")
-      }
-    }
+  /// Alias — all writes go through configuration directly
+  public var applicationConfiguration: HamsterConfiguration {
+    get { configuration }
+    set { configuration = newValue }
   }
 
   public var defaultConfiguration: HamsterConfiguration? {
@@ -145,24 +122,8 @@ open class HamsterAppDependencyContainer {
   }
 
   public func resetAppConfiguration() {
-    HamsterConfigurationRepositories.shared.resetAppConfiguration()
-    var config = HamsterConfiguration(
-      general: GeneralConfiguration(),
-      toolbar: KeyboardToolbarConfiguration(
-        heightOfToolbar: 58,
-        heightOfCodingArea: 20,
-        codingAreaFontSize: 20,
-        candidateWordFontSize: 20
-      ),
-      keyboard: KeyboardConfiguration(enableEmbeddedInputMode: false),
-      rime: RimeConfiguration(),
-      swipe: KeyboardSwipeConfiguration(distanceThreshold: 80),
-      keyboards: nil
-    )
-    config.keyboard?.keyboardRowHeight = 58
-    HamsterAppDependencyContainer.shared.applicationConfiguration = config
-    if let configuration = try? HamsterConfigurationRepositories.shared.loadConfiguration() {
-      HamsterAppDependencyContainer.shared.configuration = configuration
+    if let defaultConfig = defaultConfiguration {
+      configuration = defaultConfig
     }
   }
 
