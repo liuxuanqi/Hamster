@@ -12,9 +12,7 @@ import Foundation
 extension HamsterConfiguration {
   /// 用于测试的模拟数据
   static let preview = HamsterConfiguration(
-    general: GeneralConfiguration(
-      enableAppleCloud: true,
-      regexOnCopyFile: ["^.text|.yaml$"]),
+    general: GeneralConfiguration(),
     toolbar: KeyboardToolbarConfiguration(
       enableToolbar: true,
       heightOfToolbar: 65,
@@ -65,21 +63,12 @@ extension HamsterConfiguration {
       ]),
     rime: .init(
       maximumNumberOfCandidateWords: 30,
-      keyValueOfSwitchSimplifiedAndTraditional: "simplified",
-      overrideDictFiles: true),
+      keyValueOfSwitchSimplifiedAndTraditional: "simplified"),
     swipe: .init())
 
   static let sampleString = """
 # 通用配置
-general:
-  enableAppleCloud: false
-  regexOnCopyFile:
-  #    - ^.*[.]userdb.*$
-  #    - ^.*build.*$
-  #    - ^.*SharedSupport.*$
-  #    - ^.*[.]bin$
-  # 内置文本编辑器参数: 是否自动换行
-  textEditorLineWrappingEnabled: true
+general: {}
 
 # 工具栏
 toolbar:
@@ -255,21 +244,6 @@ keyboard:
 rime:
   maximumNumberOfCandidateWords: 100
   keyValueOfSwitchSimplifiedAndTraditional: traditionalization
-  # RIME 重新部署时，是否覆盖词库文件
-  # 如果使用自造词，需要改为 false, 否则部署时会覆盖键盘自造词文件
-  overrideDictFiles: true
-  # 覆盖词库文件的正则表达式
-  # 使用场景：
-  # 在开启 overrideDictFiles 后，每次重新部署会按照正则表达式符合的条件翻盖文件
-  regexOnOverrideDictFiles:
-    - "^.*[.]userdb.*$"
-    - "^.*[.]txt$"
-  # 拷贝键盘文件至应用沙盒目录的正则表达式，只会拷贝并覆盖符合表达式的文件。
-  # 正则表达式为空时，则使用默认值 ["^.*[.]userdb.*$", "^.*[.]txt$"]
-  # 使用场景：在文件管理功能中，拷贝键盘词库文件至应用
-  regexOnCopyAppGroupDictFile:
-    - "^.*[.]userdb.*$"
-    - "^.*[.]txt$"
 
 # 划动相关配置
 swipe:

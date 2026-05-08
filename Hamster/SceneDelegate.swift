@@ -6,7 +6,6 @@
 //
 
 import HamsteriOS
-import HamsterKit
 import UIKit
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate, UISceneDelegate {
@@ -46,10 +45,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UISceneDelegate {
         HamsterAppDependencyContainer.shared.mainViewModel.navigation(subView)
       }
     }
-  }
-
-  func windowScene(_ windowScene: UIWindowScene, performActionFor shortcutItem: UIApplicationShortcutItem, completionHandler: @escaping (Bool) -> Void) {
-    completionHandler(true)
   }
 
   func sceneDidDisconnect(_ scene: UIScene) {}

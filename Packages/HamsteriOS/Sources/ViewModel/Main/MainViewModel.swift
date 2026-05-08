@@ -7,22 +7,11 @@
 
 import Combine
 import Foundation
-import HamsterKit
 
 public class MainViewModel: ObservableObject {
   public let subViewSubject = PassthroughSubject<SettingsSubView, Never>()
   public var subViewPublished: AnyPublisher<SettingsSubView, Never> {
     subViewSubject.eraseToAnyPublisher()
-  }
-
-  public let shortcutItemTypeSubject = PassthroughSubject<ShortcutItemType, Never>()
-  public var shortcutItemTypePublished: AnyPublisher<ShortcutItemType, Never> {
-    shortcutItemTypeSubject.eraseToAnyPublisher()
-  }
-
-
-  public func execShortcutCommand(_ shortItemType: ShortcutItemType) {
-    shortcutItemTypeSubject.send(shortItemType)
   }
 
   public func navigation(_ subView: SettingsSubView) {

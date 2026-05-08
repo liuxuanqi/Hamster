@@ -12,9 +12,6 @@ public enum HamsterConstants {
   /// AppGroup ID
   public static let appGroupName = "group.xuanqi.liu.TianShu"
 
-  /// iCloud ID
-  public static let iCloudID = "iCloud.xuanqi.liu.TianShu"
-
   /// keyboard Bundle ID
   public static let keyboardBundleID = "xuanqi.liu.TianShu.Keyboard"
 

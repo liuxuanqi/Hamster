@@ -12,9 +12,7 @@ import Foundation
 public extension HamsterPatchConfiguration {
   static let preview = HamsterPatchConfiguration(
     patch: HamsterConfiguration(
-      general: GeneralConfiguration(
-        enableAppleCloud: false
-      ),
+      general: GeneralConfiguration(),
       toolbar: KeyboardToolbarConfiguration(
         enableToolbar: false
       ),
