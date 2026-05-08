@@ -81,10 +81,6 @@ public class RimeContext {
   /// rime option 选项对应的值的缓存
   private var optionValueCache: [String: [Bool: String]] = [:]
 
-  /// 用户选择的候选拼音
-  /// 注意：只保存最近一次选择的拼音和拼音开始位置及长度
-  public lazy var selectCandidatePinyin: (String, Int, Int)? = nil
-
   /// 字母模式
   @MainActor
   public lazy var asciiMode: Bool = false
@@ -135,7 +131,6 @@ public extension RimeContext {
   func reset() {
     self.pageIndex = 0
     self.userInputKey = ""
-    self.selectCandidatePinyin = nil
     self.suggestions.removeAll(keepingCapacity: false)
     Rime.shared.cleanComposition()
   }
@@ -286,36 +281,6 @@ public extension RimeContext {
     syncContext()
   }
 
-  // 同步中文简繁状态
-  func syncTraditionalSimplifiedChineseMode(simplifiedModeKey: String) {
-    // 获取运行时状态
-    let simplifiedModeValue = Rime.shared.simplifiedChineseMode(key: simplifiedModeKey)
-
-    // 获取文件中保存状态
-    let value = Rime.shared.API().getCustomize("patch/\(simplifiedModeKey)") ?? ""
-    if value.isEmpty {
-      // 首次加载保存简繁状态
-      let handled = Rime.shared.API().customize(simplifiedModeKey, stringValue: String(simplifiedModeValue))
-      Logger.statistics.info("syncTraditionalSimplifiedChineseMode() first save. key: \(simplifiedModeKey), value: \(simplifiedModeValue), handled: \(handled)")
-    } else {
-//      let handled = Rime.shared.setSimplifiedChineseMode(key: simplifiedModeKey, value: (value as NSString).boolValue)
-//      Logger.statistics.info("syncTraditionalSimplifiedChineseMode() set runtime state. key: \(simplifiedModeKey), value: \(value), handled: \(handled)")
-    }
-  }
-
-  /// rime 中文简繁状态切换
-  func switchTraditionalSimplifiedChinese(_ simplifiedModeKey: String) {
-    let simplifiedModeValue = Rime.shared.simplifiedChineseMode(key: simplifiedModeKey)
-
-    // 设置运行时状态
-    Rime.shared.setSimplifiedChineseMode(key: simplifiedModeKey, value: !simplifiedModeValue)
-    Logger.statistics.info("switchTraditionalSimplifiedChinese key: \(simplifiedModeKey), value: \(!simplifiedModeValue)")
-
-    // 保存运行时状态
-    let handled = Rime.shared.API().customize(simplifiedModeKey, stringValue: String(!simplifiedModeValue))
-    Logger.statistics.info("switchTraditionalSimplifiedChinese save file state. key: \(simplifiedModeKey), value: \(!simplifiedModeValue), handled: \(handled)")
-  }
-
   /// 中英切换
   @MainActor
   func switchEnglishChinese() {
@@ -395,14 +360,6 @@ public extension RimeContext {
 
     self.syncContext()
 
-    return true
-  }
-
-  @MainActor
-  func tryHandleReplaceInputTexts(_ text: String, startPos: Int, count: Int) -> Bool {
-    guard Rime.shared.replaceInputKeys(text, startPos: startPos, count: count) else { return false }
-    self.selectCandidatePinyin = (text, startPos, count)
-    self.syncContext()
     return true
   }
 

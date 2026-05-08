@@ -77,12 +77,7 @@ public extension KeyboardInputViewController {
   }
 
   func switchTraditionalSimplifiedChinese() {
-    guard let simplifiedModeKey = keyboardContext.hamsterConfiguration?.rime?.keyValueOfSwitchSimplifiedAndTraditional else {
-      Logger.statistics.warning("cannot get keyValueOfSwitchSimplifiedAndTraditional")
-      return
-    }
-
-    rimeContext.switchTraditionalSimplifiedChinese(simplifiedModeKey)
+    // SimeEngine does not support traditional/simplified switching
   }
 
   func switchEnglishChinese() {

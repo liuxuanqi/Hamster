@@ -483,18 +483,6 @@ open class KeyboardInputViewController: UIInputViewController, KeyboardControlle
       return
     }
 
-    // 拼音九宫格处理
-    if keyboardContext.keyboardType.isChineseNineGrid {
-      if let selectCandidatePinyin = rimeContext.selectCandidatePinyin {
-        if let t9pinyin = pinyinToT9Mapping[selectCandidatePinyin.0] {
-          let handled = rimeContext.tryHandleReplaceInputTexts(t9pinyin, startPos: selectCandidatePinyin.1, count: selectCandidatePinyin.2)
-          Logger.statistics.info("change input text handled: \(handled)")
-        }
-        rimeContext.selectCandidatePinyin = nil
-        return
-      }
-    }
-
     // 非九宫格处理
     rimeContext.deleteBackward()
   }
@@ -847,9 +835,6 @@ private extension KeyboardInputViewController {
       }
 
       await rimeContext.start(hasFullAccess: true)
-
-      let simplifiedModeKey = await keyboardContext.hamsterConfiguration?.rime?.keyValueOfSwitchSimplifiedAndTraditional ?? ""
-      await rimeContext.syncTraditionalSimplifiedChineseMode(simplifiedModeKey: simplifiedModeKey)
     }
   }
 

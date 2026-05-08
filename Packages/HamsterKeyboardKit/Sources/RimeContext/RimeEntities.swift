@@ -1,6 +1,5 @@
 import Foundation
-
-public typealias RimeSessionId = UInt
+import HamsterKit
 
 public protocol IRimeNotificationDelegate: AnyObject {
     func onDeployStart()
@@ -30,25 +29,10 @@ public class IRimeStatus: @unchecked Sendable {
     public var schemaId: String = ""
     public var schemaName: String = ""
     public var isASCIIMode: Bool = false
-    public var isASCIIPunct: Bool = false
     public var isComposing: Bool = false
-    public var isDisabled: Bool = false
-    public var isFullShape: Bool = false
     public var isSimplified: Bool = true
-    public var isTraditional: Bool = false
 
     public init() {}
-}
-
-public class IRimeCandidate: @unchecked Sendable {
-    public var text: String = ""
-    public var comment: String = ""
-
-    public init() {}
-    public init(text: String, comment: String) {
-        self.text = text
-        self.comment = comment
-    }
 }
 
 public class IRimeMenu: @unchecked Sendable {
@@ -58,7 +42,7 @@ public class IRimeMenu: @unchecked Sendable {
     public var highlightedCandidateIndex: Int32 = 0
     public var numCandidates: Int32 = 0
     public var selectKeys: String = ""
-    public var candidates: [IRimeCandidate] = []
+    public var candidates: [CandidateWord] = []
 
     public init() {}
 }
@@ -77,28 +61,10 @@ public class IRimeContext: @unchecked Sendable {
     public var commitTextPreview: String = ""
     public var menu: IRimeMenu!
     public var composition: IRimeComposition!
-    public var labels: [String] = []
+    public var labels: [String]? = nil
 
     public init() {
         self.menu = IRimeMenu()
         self.composition = IRimeComposition()
     }
-}
-
-public class IRimeConfig: @unchecked Sendable {
-    public init() {}
-    public func getString(_ key: String) -> String? { nil }
-    public func getBool(_ key: String) -> Bool { false }
-    public func getInt(_ key: String) -> Int32 { 0 }
-    public func setInt(_ key: String, value: Int32) -> Bool { false }
-    public func getDouble(_ key: String) -> Double { 0 }
-    public func close() {}
-}
-
-public class IRimeAPI: @unchecked Sendable {
-    public init() {}
-    public func syncUserData() -> Bool { true }
-    public func customize(_ key: String, stringValue value: String) -> Bool { true }
-    public func customize(_ key: String, boolValue value: Bool) -> Bool { true }
-    public func getCustomize(_ key: String) -> String? { nil }
 }

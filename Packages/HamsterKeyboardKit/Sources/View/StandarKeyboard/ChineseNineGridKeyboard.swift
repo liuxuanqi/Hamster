@@ -344,28 +344,5 @@ public extension ChineseNineGridKeyboard {
       rimeContext.reset()
       return
     }
-
-    // 候选拼音处理: 待修改拼音音节开始位置
-    var startPos = 0
-    var inputKeys = rimeContext.getInputKeys()
-    let inputKeysCount = inputKeys.utf8.count
-
-    if let symbolT9Pinyin = pinyinToT9Mapping[symbol] {
-      while !inputKeys.isEmpty {
-        if inputKeys.hasPrefix(symbolT9Pinyin) {
-          break
-        }
-        startPos += inputKeys.first?.utf8.count ?? 0
-        inputKeys = String(inputKeys.dropFirst())
-      }
-    }
-
-    // 已经选择到输入拼音末尾了
-    if inputKeys.isEmpty, startPos == inputKeysCount, let selectCandidatePinyin = rimeContext.selectCandidatePinyin {
-      startPos = selectCandidatePinyin.1
-    }
-
-    let handle = rimeContext.tryHandleReplaceInputTexts(symbol, startPos: startPos, count: symbol.utf8.count)
-    Logger.statistics.warning("change input text handle = \(handle)")
   }
 }

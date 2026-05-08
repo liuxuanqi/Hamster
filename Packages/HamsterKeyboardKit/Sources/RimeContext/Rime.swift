@@ -13,20 +13,13 @@ public class Rime {
     public static let shared: Rime = .init()
 
     private var session: SimeSession?
-    private var isFirstRun = true
     private var traits: IRimeTraits?
     private var currentInputSchema: String = "mspy"
     private var commitBuffer: String = ""
 
     private weak var notificationDelegate: IRimeNotificationDelegate?
 
-    private let rimeAPI = IRimeAPI()
-
     private init() {}
-
-    public func API() -> IRimeAPI {
-        return rimeAPI
-    }
 
     public static func createTraits(sharedSupportDir: String, userDataDir: String, models: [String] = []) -> IRimeTraits {
         let traits = IRimeTraits()
@@ -46,22 +39,7 @@ public class Rime {
         notificationDelegate = delegate
     }
 
-    public func setupRime(sharedSupportDir: String, userDataDir: String) {
-        setupRime(Self.createTraits(sharedSupportDir: sharedSupportDir, userDataDir: userDataDir))
-    }
-
-    public func setupRime(_ traits: IRimeTraits) {
-        if isFirstRun {
-            isFirstRun = false
-        }
-    }
-
-    public func initialize(_ traits: IRimeTraits? = nil) {}
-
     public func start(_ traits: IRimeTraits? = nil, maintenance: Bool = false, fullCheck: Bool = false) {
-        if let traits = traits {
-            setupRime(traits)
-        }
         self.traits = traits
 
         if maintenance, let userDir = traits?.userDataDir, !userDir.isEmpty {
@@ -72,12 +50,6 @@ public class Rime {
         loadSession()
     }
 
-    public func deploy(_ traits: IRimeTraits? = nil) -> Bool {
-        notificationDelegate?.onDeployStart()
-        notificationDelegate?.onDeploySuccess()
-        return true
-    }
-
     public func isRunning() -> Bool {
         return session != nil
     }
@@ -85,32 +57,6 @@ public class Rime {
     public func shutdown() {
         session = nil
     }
-
-    public func getSession() -> RimeSessionId {
-        return session != nil ? 1 : 0
-    }
-
-    public func createSession() {
-        if session == nil {
-            loadSession()
-        }
-    }
-
-    public func restSession() {
-        session?.reset()
-        session?.engine.clearHistory()
-        commitBuffer = ""
-    }
-
-    public func openSchema(schema: String) -> IRimeConfig {
-        IRimeConfig()
-    }
-
-    public func simplifiedChineseMode(key: String) -> Bool {
-        return false
-    }
-
-    public func setSimplifiedChineseMode(key: String, value: Bool) {}
 
     public func inputKey(_ key: String) -> Bool {
         createSession()
@@ -172,17 +118,6 @@ public class Rime {
         return false
     }
 
-    public func replaceInputKeys(_ inputKeys: String, startPos: Int, count: Int) -> Bool {
-        return false
-    }
-
-    public func candidateList() -> [CandidateWord] {
-        guard let session = session else { return [] }
-        return session.candidates.map {
-            CandidateWord(text: $0.word, comment: $0.pinyin)
-        }
-    }
-
     public func isAsciiMode() -> Bool {
         return session?.asciiMode ?? false
     }
@@ -190,17 +125,6 @@ public class Rime {
     public func asciiMode(_ value: Bool) {
         session?.asciiMode = value
         notificationDelegate?.onChangeMode(value ? "ascii_mode" : "!ascii_mode")
-    }
-
-    public func getCandidate(index: Int, count: Int) -> [IRimeCandidate] {
-        guard let session = session else { return [] }
-        while index + count > session.candidates.count && session.hasMore {
-            session.loadMore()
-        }
-        let all = session.candidates
-        let end = min(index + count, all.count)
-        guard index < all.count else { return [] }
-        return all[index..<end].map { IRimeCandidate(text: $0.word, comment: $0.pinyin) }
     }
 
     public func selectCandidate(index: Int) -> Bool {
@@ -275,34 +199,10 @@ public class Rime {
         return ctx
     }
 
-    public func getSchemas() -> [RimeSchema] {
-        return [RimeSchema(schemaId: "mspy", schemaName: "微软双拼")]
-    }
-
-    public func currentSchema() -> RimeSchema? {
-        return RimeSchema(schemaId: currentInputSchema, schemaName: "微软双拼")
-    }
-
     public func setSchema(_ schemaId: String) -> Bool {
         createSession()
         currentInputSchema = schemaId
         return true
-    }
-
-    public func getAvailableRimeSchemas() -> [RimeSchema] {
-        return [RimeSchema(schemaId: "mspy", schemaName: "微软双拼")]
-    }
-
-    public func getSelectedRimeSchema() -> [RimeSchema] {
-        return [RimeSchema(schemaId: "mspy", schemaName: "微软双拼")]
-    }
-
-    public func selectRimeSchemas(_ schemas: [String]) -> Bool {
-        return true
-    }
-
-    public func getHotkeys() -> String {
-        return "f4"
     }
 
     public func getCaretPosition() -> Int {
@@ -310,10 +210,6 @@ public class Rime {
     }
 
     public func setCaretPosition(_ position: Int) {}
-
-    public func getConfigFileValue(configFileName: String, key: String) -> String? {
-        return nil
-    }
 
     public func getStateLabel(option: String, state: Bool, abbreviated: Bool) -> String {
         if option == "ascii_mode" {
@@ -323,6 +219,12 @@ public class Rime {
     }
 
     // MARK: - Private
+
+    private func createSession() {
+        if session == nil {
+            loadSession()
+        }
+    }
 
     private func loadSession() {
         guard session == nil else { return }
