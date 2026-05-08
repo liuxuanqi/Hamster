@@ -20,34 +20,19 @@ public class RimeContext {
   /// 是否使用 IRimeContext 中分页信息
   public private(set) lazy var useContextPaging = false
 
+  private static let wanxiangSchema = RimeSchema(schemaId: "wanxiang", schemaName: "万象")
+
   /// rime 输入方案列表
-  public private(set) lazy var schemas: [RimeSchema] = UserDefaults.hamster.schemas {
-    didSet {
-      UserDefaults.hamster.schemas = self.schemas
-    }
-  }
+  public private(set) lazy var schemas: [RimeSchema] = [Self.wanxiangSchema]
 
   /// rime 用户选择方案列表
-  public lazy var selectSchemas: [RimeSchema] = UserDefaults.hamster.selectSchemas {
-    didSet {
-      UserDefaults.hamster.selectSchemas = self.selectSchemas.sorted()
-    }
-  }
+  public lazy var selectSchemas: [RimeSchema] = [Self.wanxiangSchema]
 
   /// 当前输入方案
-  public lazy var currentSchema: RimeSchema? = UserDefaults.hamster.currentSchema {
-    didSet {
-      // 注意：如果没有完全访问权限，UserDefaults.hamster 会保存失败
-      UserDefaults.hamster.currentSchema = currentSchema
-    }
-  }
+  public var currentSchema: RimeSchema? { Self.wanxiangSchema }
 
   /// 上次使用输入方案
-  public lazy var latestSchema: RimeSchema? = UserDefaults.hamster.latestSchema {
-    didSet {
-      UserDefaults.hamster.currentSchema = currentSchema
-    }
-  }
+  public var latestSchema: RimeSchema? { nil }
 
   /// 用户输入键值
   public var userInputKey: String = "" {
@@ -137,52 +122,6 @@ public extension RimeContext {
 
   func resetCommitText() {
     self.commitText = ""
-  }
-
-  /// 选择输入方案后重置当前输入方案
-  /// 注意：仅限内部调用
-  private func resetCurrentSchema() {
-    // 默认当前方案为输入方案中的第一个输入方案
-    // 注意：当前方案可能为空，所以不能用 contains() 判断
-    let firstInputSchema = selectSchemas.first { self.currentSchema == $0 }
-    if firstInputSchema == nil, !selectSchemas.isEmpty {
-      self.currentSchema = selectSchemas[0]
-    }
-    Logger.statistics.debug("current schema: \(self.currentSchema?.schemaId ?? "") \(self.currentSchema?.schemaName ?? "")")
-  }
-
-  /// 选择输入方案后重置
-  /// 注意：仅限内部调用
-  private func resetLatestSchema() {
-    // 默认最近一个输入方案为方案输入列表中的第二位
-    let schemas = selectSchemas
-      .filter { $0.schemaId != self.currentSchema?.schemaId }
-
-    if self.latestSchema == nil, !schemas.isEmpty {
-      self.latestSchema = schemas[0]
-    } else if let latestSchema = self.latestSchema, !schemas.contains(latestSchema) {
-      self.latestSchema = schemas.isEmpty ? nil : schemas[0]
-    }
-    Logger.statistics.debug("latest schema: \(self.latestSchema?.schemaId ?? "") \(self.latestSchema?.schemaName ?? "")")
-  }
-
-  func appendSelectSchema(_ schema: RimeSchema) {
-    self.selectSchemas.append(schema)
-    self.selectSchemas.sort()
-    resetCurrentSchema()
-    resetLatestSchema()
-  }
-
-  func removeSelectSchema(_ schema: RimeSchema) {
-    self.selectSchemas.removeAll(where: { $0 == schema })
-    self.selectSchemas.sort()
-    resetCurrentSchema()
-    resetLatestSchema()
-  }
-
-  func setCurrentSchema(_ schema: RimeSchema?) {
-    self.latestSchema = self.currentSchema
-    self.currentSchema = schema
   }
 
   @MainActor
