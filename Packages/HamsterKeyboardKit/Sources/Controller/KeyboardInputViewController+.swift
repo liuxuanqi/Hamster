@@ -67,8 +67,8 @@ public extension KeyboardInputViewController {
       self.copyCommand()
     case .paste:
       self.pasteCommand()
-    case .sendKeys(let keys):
-      self.sendKeys(keys)
+    case .sendKeys:
+      break
     case .dismissKeyboard:
       self.dismissKeyboard()
     default:
@@ -165,19 +165,6 @@ public extension KeyboardInputViewController {
     if let text = UIPasteboard.general.string {
       textDocumentProxy.insertText(text)
     }
-  }
-
-  /// 向 RIME 引擎发送指定键
-  func sendKeys(_ keys: String) {
-    var keyList = keys.split(separator: "+").map { String($0) }
-    guard let inputKey = keyList.popLast() else { return }
-    guard let inputKeyCode = RimeContext.keyCodeMapping[inputKey] else {
-      Logger.statistics.warning("inputKey: \(inputKey) not found mapping keyCode")
-      return
-    }
-    let modifier = keyList.compactMap { RimeContext.modifierMapping[$0] }.reduce(0) { $0 | $1 }
-    let handled = rimeContext.tryHandleInputCode(inputKeyCode, modifier: modifier)
-    Logger.statistics.info("send keys: \(keys) to rime handled \(handled)")
   }
 }
 
