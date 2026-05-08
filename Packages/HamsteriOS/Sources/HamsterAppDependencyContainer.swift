@@ -98,6 +98,8 @@ open class HamsterAppDependencyContainer {
     if UserDefaults.standard.isFirstRunning {
       do {
         try FileManager.initSandboxSharedSupportDirectory(override: true)
+        try FileManager.initSandboxUserDataDirectory(override: true, unzip: false)
+        try FileManager.syncSandboxSharedSupportDirectoryToAppGroup(override: true)
         let hamsterConfiguration = try HamsterConfigurationRepositories.shared.loadFromYAML(FileManager.hamsterConfigFileOnSandboxSharedSupport)
         try HamsterConfigurationRepositories.shared.saveToUserDefaultsOnDefault(hamsterConfiguration)
         self.configuration = hamsterConfiguration
@@ -111,6 +113,7 @@ open class HamsterAppDependencyContainer {
           path: plistDir.appendingPathComponent("hamster.plist")
         )
         try HamsterConfigurationRepositories.shared.saveToUserDefaults(hamsterConfiguration)
+        UserDefaults.standard.isFirstRunning = false
       } catch {
         self.configuration = HamsterConfiguration()
         Logger.statistics.error("init SharedSupport error: \(error.localizedDescription)")
