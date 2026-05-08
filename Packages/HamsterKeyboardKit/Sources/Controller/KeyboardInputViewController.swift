@@ -836,21 +836,6 @@ private extension KeyboardInputViewController {
 //        await shutdownRIME()
 //      }
 
-      // 检测是否需要覆盖 RIME 目录
-      // let overrideRimeDirectory = UserDefaults.hamster.overrideRimeDirectory
-
-      // 检测对 appGroup 路径下是否有写入权限，如果没有写入权限，则需要将 appGroup 下文件复制到键盘的 Sandbox 路径下
-//      if await !self.hasFullAccess {
-//        do {
-//          try FileManager.syncAppGroupUserDataDirectoryToSandbox(override: overrideRimeDirectory)
-//
-//          // 注意：如果没有开启键盘完全访问权限，则无权对 UserDefaults.hamster 写入
-//          UserDefaults.hamster.overrideRimeDirectory = false
-//        } catch {
-//          Logger.statistics.error("FileManager.syncAppGroupUserDataDirectoryToSandbox(override: \(overrideRimeDirectory)) error: \(error.localizedDescription)")
-//        }
-//      }
-
       guard await !rimeContext.isRunning else { return }
 
       if let maximumNumberOfCandidateWords = await keyboardContext.hamsterConfiguration?.rime?.maximumNumberOfCandidateWords {

@@ -476,10 +476,4 @@ public extension FileManager {
     Logger.statistics.info("rime copyAppGroupUserDirectoryToAppleCloudUserDataDirectory:")
     try FileManager.incrementalCopy(src: appGroupUserDataDirectoryURL, dst: sandboxUserDataDirectory, filterRegex: filterRegex, filterMatchBreak: filterMatchBreak, override: override)
   }
-
-  /// 拷贝 AppGroup 下词库文件
-  static func copyAppGroupUserDict(_ regex: [String] = []) throws {
-    try copyAppGroupSharedSupportDirectoryToSandbox(regex, filterMatchBreak: false)
-    try copyAppGroupUserDirectoryToSandbox(regex, filterMatchBreak: false)
-  }
 }

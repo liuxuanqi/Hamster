@@ -26,6 +26,7 @@ let package = Package(
         "HamsterKit",
         "HamsterUIKit",
         "RimeKit",
+        "Yams",
       ],
       path: "Sources",
       resources: [.process("Resources")]),

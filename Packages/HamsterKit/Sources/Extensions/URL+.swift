@@ -7,7 +7,6 @@
 
 import Foundation
 import os
-import Yams
 
 public extension URL {
   /// 获取制定URL下文件或目录URL
@@ -30,18 +29,5 @@ public extension URL {
       return nil
     }
     return String(data: data, encoding: .utf8)
-  }
-
-  /// 获取 RIME 同步路径位置
-  func getSyncPath() -> String? {
-    guard let yamlContent = getStringFromFile() else { return nil }
-    do {
-      if let yamlFileContent = try Yams.load(yaml: yamlContent) as? [String: Any] {
-        return yamlFileContent["sync_dir"] as? String
-      }
-    } catch {
-      Logger.statistics.error("yaml load error \(error.localizedDescription), url:\(self.path)")
-    }
-    return nil
   }
 }
