@@ -21,7 +21,7 @@ class KeyboardToolbarView: NibLessView {
   private let appearance: KeyboardAppearance
   private let actionHandler: KeyboardActionHandler
   private let keyboardContext: KeyboardContext
-  private var rimeContext: RimeContext
+  private var rimeContext: SimeContext
   private var style: CandidateBarStyle
   private var userInterfaceStyle: UIUserInterfaceStyle
   private var oldBounds: CGRect = .zero
@@ -76,7 +76,7 @@ class KeyboardToolbarView: NibLessView {
     return view
   }()
 
-  init(appearance: KeyboardAppearance, actionHandler: KeyboardActionHandler, keyboardContext: KeyboardContext, rimeContext: RimeContext) {
+  init(appearance: KeyboardAppearance, actionHandler: KeyboardActionHandler, keyboardContext: KeyboardContext, rimeContext: SimeContext) {
     self.appearance = appearance
     self.actionHandler = actionHandler
     self.keyboardContext = keyboardContext

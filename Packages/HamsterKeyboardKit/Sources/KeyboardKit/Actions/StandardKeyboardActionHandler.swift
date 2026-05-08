@@ -49,7 +49,7 @@ open class StandardKeyboardActionHandler: NSObject, KeyboardActionHandler {
       }
     )
   }()
-  private var rimeContext: RimeContext
+  private var rimeContext: SimeContext
 
   // MARK: - Initialization
 
@@ -70,7 +70,7 @@ open class StandardKeyboardActionHandler: NSObject, KeyboardActionHandler {
   public init(
     controller: KeyboardController?,
     keyboardContext: KeyboardContext,
-    rimeContext: RimeContext,
+    rimeContext: SimeContext,
     keyboardBehavior: KeyboardBehavior,
     autocompleteContext: AutocompleteContext,
     keyboardFeedbackHandler: KeyboardFeedbackHandler,

@@ -35,7 +35,7 @@ public class KeyboardButton: UIControl {
   /// 键盘上下文
   let keyboardContext: KeyboardContext
 
-  let rimeContext: RimeContext
+  let rimeContext: SimeContext
 
   /// 键盘外观
   let appearance: KeyboardAppearance
@@ -172,7 +172,7 @@ public class KeyboardButton: UIControl {
     item: KeyboardLayoutItem,
     actionHandler: KeyboardActionHandler,
     keyboardContext: KeyboardContext,
-    rimeContext: RimeContext,
+    rimeContext: SimeContext,
     calloutContext: KeyboardCalloutContext,
     appearance: KeyboardAppearance)
   {

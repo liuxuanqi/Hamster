@@ -19,7 +19,7 @@ open class HamsterAppDependencyContainer {
 
   // MARK: Long-lived 依赖属性
 
-  public let rimeContext: RimeContext
+  public let rimeContext: SimeContext
   public let mainViewModel: MainViewModel
 
   public lazy var settingsViewModel: SettingsViewModel = {
@@ -69,7 +69,7 @@ open class HamsterAppDependencyContainer {
   }
 
   private init() {
-    self.rimeContext = RimeContext()
+    self.rimeContext = SimeContext()
     self.mainViewModel = MainViewModel()
 
     if UserDefaults.standard.isFirstRunning {

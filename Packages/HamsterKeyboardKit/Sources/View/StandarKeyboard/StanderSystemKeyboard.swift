@@ -23,7 +23,7 @@ public class StanderSystemKeyboard: KeyboardTouchView {
   private var calloutContext: KeyboardCalloutContext
   private var inputCalloutContext: InputCalloutContext
   private var keyboardContext: KeyboardContext
-  private var rimeContext: RimeContext
+  private var rimeContext: SimeContext
 
   /// TODO: 触摸管理视图
   /// 统一手势处理
@@ -91,7 +91,7 @@ public class StanderSystemKeyboard: KeyboardTouchView {
     appearance: KeyboardAppearance,
     actionHandler: KeyboardActionHandler,
     keyboardContext: KeyboardContext,
-    rimeContext: RimeContext,
+    rimeContext: SimeContext,
     calloutContext: KeyboardCalloutContext?
   ) {
     self.keyboardLayoutProvider = keyboardLayoutProvider

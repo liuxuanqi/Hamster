@@ -377,7 +377,7 @@ open class KeyboardInputViewController: UIInputViewController, KeyboardControlle
   /**
    RIME 引擎上下文
    */
-  public lazy var rimeContext = RimeContext()
+  public lazy var rimeContext = SimeContext()
 
   // MARK: - Text And Selection, Implementations UITextInputDelegate
 
@@ -692,10 +692,6 @@ private extension KeyboardInputViewController {
 
       if let maximumNumberOfCandidateWords = await keyboardContext.hamsterConfiguration?.rime?.maximumNumberOfCandidateWords {
         await rimeContext.setMaximumNumberOfCandidateWords(maximumNumberOfCandidateWords)
-      }
-
-      if let swipePaging = await keyboardContext.hamsterConfiguration?.toolbar?.swipePaging {
-        await rimeContext.setUseContextPaging(swipePaging == false)
       }
 
       await rimeContext.start()

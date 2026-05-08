@@ -28,7 +28,7 @@ class KeyboardRootView: NibLessView {
   private var calloutContext: KeyboardCalloutContext
   private var inputCalloutContext: InputCalloutContext
   private var keyboardContext: KeyboardContext
-  private var rimeContext: RimeContext
+  private var rimeContext: SimeContext
 
   private var subscriptions = Set<AnyCancellable>()
 
@@ -184,7 +184,7 @@ class KeyboardRootView: NibLessView {
     actionHandler: KeyboardActionHandler,
     keyboardContext: KeyboardContext,
     calloutContext: KeyboardCalloutContext?,
-    rimeContext: RimeContext
+    rimeContext: SimeContext
   ) {
     self.keyboardLayoutProvider = keyboardLayoutProvider
     self.layoutConfig = .standard(for: keyboardContext)

@@ -17,7 +17,7 @@ public class CandidateWordsCollectionView: UICollectionView {
   var style: CandidateBarStyle
 
   /// RIME 上下文
-  let rimeContext: RimeContext
+  let rimeContext: SimeContext
 
   let keyboardContext: KeyboardContext
 
@@ -42,7 +42,7 @@ public class CandidateWordsCollectionView: UICollectionView {
     style: CandidateBarStyle,
     keyboardContext: KeyboardContext,
     actionHandler: KeyboardActionHandler,
-    rimeContext: RimeContext
+    rimeContext: SimeContext
   ) {
     self.style = style
     self.keyboardContext = keyboardContext

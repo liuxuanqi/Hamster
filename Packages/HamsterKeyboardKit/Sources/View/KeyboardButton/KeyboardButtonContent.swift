@@ -18,7 +18,7 @@ public class KeyboardButtonContentView: NibLessView {
   private let appearance: KeyboardAppearance
   private var style: KeyboardButtonStyle
   private let keyboardContext: KeyboardContext
-  private let rimeContext: RimeContext
+  private let rimeContext: SimeContext
   private var oldBounds: CGRect = .zero
   private var cancellables = Set<AnyCancellable>()
 
@@ -94,7 +94,7 @@ public class KeyboardButtonContentView: NibLessView {
     return appearance.buttonText(for: action) ?? ""
   }
 
-  init(item: KeyboardLayoutItem, style: KeyboardButtonStyle, appearance: KeyboardAppearance, keyboardContext: KeyboardContext, rimeContext: RimeContext) {
+  init(item: KeyboardLayoutItem, style: KeyboardButtonStyle, appearance: KeyboardAppearance, keyboardContext: KeyboardContext, rimeContext: SimeContext) {
     self.item = item
     self.action = item.action
     self.style = style

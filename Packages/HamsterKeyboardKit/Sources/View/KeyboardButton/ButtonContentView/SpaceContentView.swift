@@ -11,7 +11,7 @@ import UIKit
 
 class SpaceContentView: NibLessView {
   private let keyboardContext: KeyboardContext
-  private let rimeContext: RimeContext
+  private let rimeContext: SimeContext
   private let item: KeyboardLayoutItem
   private var spaceText: String
   private var style: KeyboardButtonStyle
@@ -76,7 +76,7 @@ class SpaceContentView: NibLessView {
     return true
   }
 
-  init(keyboardContext: KeyboardContext, rimeContext: RimeContext, item: KeyboardLayoutItem, style: KeyboardButtonStyle, spaceText: String) {
+  init(keyboardContext: KeyboardContext, rimeContext: SimeContext, item: KeyboardLayoutItem, style: KeyboardButtonStyle, spaceText: String) {
     self.keyboardContext = keyboardContext
     self.rimeContext = rimeContext
     self.item = item

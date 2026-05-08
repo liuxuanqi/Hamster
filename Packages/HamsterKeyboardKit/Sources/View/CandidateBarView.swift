@@ -28,7 +28,7 @@ public class CandidateBarView: NibLessView {
   private var style: CandidateBarStyle
   private var actionHandler: KeyboardActionHandler
   private var keyboardContext: KeyboardContext
-  private var rimeContext: RimeContext
+  private var rimeContext: SimeContext
   private var userInterfaceStyle: UIUserInterfaceStyle
 
   /// 拼音Label
@@ -115,7 +115,7 @@ public class CandidateBarView: NibLessView {
     .standard(for: keyboardContext)
   }
 
-  init(style: CandidateBarStyle, actionHandler: KeyboardActionHandler, keyboardContext: KeyboardContext, rimeContext: RimeContext) {
+  init(style: CandidateBarStyle, actionHandler: KeyboardActionHandler, keyboardContext: KeyboardContext, rimeContext: SimeContext) {
     self.style = style
     self.actionHandler = actionHandler
     self.keyboardContext = keyboardContext

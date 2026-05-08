@@ -18,7 +18,7 @@ public class NumericNineGridKeyboard: KeyboardTouchView, UICollectionViewDelegat
   private let appearance: KeyboardAppearance
   private var keyboardContext: KeyboardContext
   private var calloutContext: KeyboardCalloutContext
-  private var rimeContext: RimeContext
+  private var rimeContext: SimeContext
   private var nonStandardStyle: NonStandardKeyboardStyle
 
   // 屏幕方向
@@ -91,7 +91,7 @@ public class NumericNineGridKeyboard: KeyboardTouchView, UICollectionViewDelegat
     appearance: KeyboardAppearance,
     keyboardContext: KeyboardContext,
     calloutContext: KeyboardCalloutContext,
-    rimeContext: RimeContext
+    rimeContext: SimeContext
   ) {
     self.keyboardLayoutProvider = NumericNineGridKeyboardLayoutProvider(keyboardContext: keyboardContext)
     self.actionHandler = actionHandler

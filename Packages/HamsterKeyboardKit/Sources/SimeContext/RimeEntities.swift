@@ -6,13 +6,6 @@ public protocol IRimeNotificationDelegate: AnyObject {
     func onLoadingSchema(_ schema: String)
 }
 
-public class IRimeTraits: @unchecked Sendable {
-    public var sharedDataDir: String = ""
-    public var userDataDir: String = ""
-
-    public init() {}
-}
-
 public class IRimeStatus: @unchecked Sendable {
     public var schemaId: String = ""
     public var schemaName: String = ""
@@ -45,7 +38,7 @@ public class IRimeComposition: @unchecked Sendable {
     public init() {}
 }
 
-public class IRimeContext: @unchecked Sendable {
+public class ISimeContext: @unchecked Sendable {
     public var commitTextPreview: String = ""
     public var menu: IRimeMenu!
     public var composition: IRimeComposition!
@@ -56,3 +49,4 @@ public class IRimeContext: @unchecked Sendable {
         self.composition = IRimeComposition()
     }
 }
+
