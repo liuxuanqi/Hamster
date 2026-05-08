@@ -195,13 +195,6 @@ public class Rime {
 
     public func setCaretPosition(_ position: Int) {}
 
-    public func getStateLabel(option: String, state: Bool, abbreviated: Bool) -> String {
-        if option == "ascii_mode" {
-            return state ? "英" : "中"
-        }
-        return state ? "ON" : "OFF"
-    }
-
     // MARK: - Private
 
     private func createSession() {

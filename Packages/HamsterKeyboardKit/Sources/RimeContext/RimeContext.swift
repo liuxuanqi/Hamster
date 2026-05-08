@@ -55,9 +55,6 @@ public class RimeContext {
     rimeContext?.composition.preedit ?? ""
   }
 
-  /// rime option 选项对应的值的缓存
-  private var optionValueCache: [String: [Bool: String]] = [:]
-
   /// 字母模式
   @MainActor
   public lazy var asciiMode: Bool = false
@@ -176,25 +173,12 @@ public extension RimeContext {
 extension RimeContext: IRimeNotificationDelegate {
   @MainActor
   public func onChangeMode(_ option: String) {
-    Logger.statistics.info("HamsterRimeNotification: onChangeMode, mode: \(option)")
-
     let optionState = !option.hasPrefix("!")
-    let optionName = optionState ? option : String(option.dropFirst())
 
-    if optionValueCache[optionName] == nil {
-      optionValueCache[optionName] = [
-        true: Rime.shared.getStateLabel(option: optionName, state: true, abbreviated: true),
-        false: Rime.shared.getStateLabel(option: optionName, state: false, abbreviated: true),
-      ]
-    }
-
-    // 中英模式
     if option.hasSuffix("ascii_mode") {
       self.setAsciiMode(optionState)
+      self.optionState = optionState ? "英" : "中"
     }
-
-    // 设置 rime option 对应的值
-    self.optionState = optionValueCache[optionName]?[optionState]
   }
 
   @MainActor
