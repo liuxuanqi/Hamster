@@ -8,7 +8,6 @@
 import Combine
 import HamsterKeyboardKit
 import HamsterKit
-import OSLog
 import ProgressHUD
 import UIKit
 
@@ -96,29 +95,4 @@ public class SettingsViewModel: ObservableObject {
     ]
     return sections
   }()
-}
-
-extension SettingsViewModel {
-  /// 启动加载数据
-  func loadAppData() async throws {
-    // 判断应用是否首次运行
-    guard UserDefaults.standard.isFirstRunning else { return }
-
-    await ProgressHUD.animate("初次启动，正在初始化……", interaction: false)
-
-    do {
-      try FileManager.initSandboxSharedSupportDirectory(override: true)
-      try FileManager.initSandboxUserDataDirectory(override: true, unzip: false)
-      try FileManager.initSandboxBackupDirectory(override: true)
-      try FileManager.syncSandboxSharedSupportDirectoryToAppGroup(override: true)
-    } catch {
-      Logger.statistics.error("rime init file directory error: \(error.localizedDescription)")
-      throw error
-    }
-
-    // 修改应用首次运行标志
-    UserDefaults.standard.isFirstRunning = false
-
-    await ProgressHUD.success("初始化完成", interaction: false, delay: 1.5)
-  }
 }

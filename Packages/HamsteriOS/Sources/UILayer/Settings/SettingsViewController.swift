@@ -7,7 +7,6 @@
 import Combine
 import HamsterKit
 import HamsterUIKit
-import OSLog
 import ProgressHUD
 import UIKit
 
@@ -54,15 +53,4 @@ public extension SettingsViewController {
       .store(in: &subscriptions)
   }
 
-  override func viewDidAppear(_ animated: Bool) {
-    super.viewDidAppear(animated)
-    Task {
-      do {
-        try await self.settingsViewModel.loadAppData()
-      } catch {
-        ProgressHUD.failed("导入数据异常", interaction: false, delay: 2)
-        Logger.statistics.error("load app data error: \(error)")
-      }
-    }
-  }
 }
