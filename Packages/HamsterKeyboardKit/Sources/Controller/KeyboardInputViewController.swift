@@ -38,10 +38,6 @@ open class KeyboardInputViewController: UIInputViewController, KeyboardControlle
 
   override open func viewDidLoad() {
     super.viewDidLoad()
-    // setupInitialWidth()
-    // setupLocaleObservation()
-    // setupNextKeyboardBehavior()
-    // KeyboardUrlOpener.shared.controller = self
     setupCombineRIMEInput()
   }
 
@@ -52,10 +48,6 @@ open class KeyboardInputViewController: UIInputViewController, KeyboardControlle
     viewWillSyncWithContext()
 
     // fix: 屏幕边缘按键触摸延迟
-    // https://stackoverflow.com/questions/39813245/touchesbeganwithevent-is-delayed-at-left-edge-of-screen
-    // 注意：添加代码日志中会有警告
-    // [Warning] Trying to set delaysTouchesBegan to NO on a system gate gesture recognizer - this is unsupported and will have undesired side effects
-    // 如果后续有更好的解决方案，可以替换此方案
     view.window?.gestureRecognizers?.forEach {
       $0.delaysTouchesBegan = false
     }
@@ -63,7 +55,6 @@ open class KeyboardInputViewController: UIInputViewController, KeyboardControlle
 
   override open func viewDidAppear(_ animated: Bool) {
     super.viewDidAppear(animated)
-//    viewWillHandleDictationResult()
   }
 
   override open func viewDidLayoutSubviews() {
@@ -73,16 +64,9 @@ open class KeyboardInputViewController: UIInputViewController, KeyboardControlle
   }
 
   override open func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-    // Logger.statistics.info("controller traitCollectionDidChange()")
     super.traitCollectionDidChange(previousTraitCollection)
     viewWillSyncWithContext()
   }
-
-  /// 内存回收
-//  override open func didReceiveMemoryWarning() {
-//    shutdownRIME()
-//    setupRIME()
-//  }
 
   // MARK: - Keyboard View Controller Lifecycle
 
@@ -163,31 +147,9 @@ open class KeyboardInputViewController: UIInputViewController, KeyboardControlle
     super.textDocumentProxy
   }
 
-  /**
-   The text document proxy to use, which can either be the
-   original text input proxy or the ``textInputProxy``, if
-   it is set to a custom value.
-
-   要使用的 document proxy，可以是原生的文本输入代理，也可以是 ``textInputProxy``（如果设置为自定义值）。
-   */
   override open var textDocumentProxy: UITextDocumentProxy {
-//    textInputProxy ?? mainTextDocumentProxy
     mainTextDocumentProxy
   }
-
-  /**
-   A custom text input proxy to which text can be routed.
-
-   自定义文本输入代理，可将文本传送到该代理。
-
-   Setting the property makes ``textDocumentProxy`` return
-   the custom proxy instead of the original one.
-
-   设置该属性可使 ``textDocumentProxy`` 返回自定义代理，而不是原始代理。
-   */
-//  public var textInputProxy: TextInputProxy? {
-//    didSet { viewWillSyncWithContext() }
-//  }
 
   // MARK: - Observables
 
@@ -451,11 +413,7 @@ open class KeyboardInputViewController: UIInputViewController, KeyboardControlle
   ///   * textInput: 采用 UITextInput 协议的文档实例。
   override open func textDidChange(_ textInput: UITextInput?) {
     super.textDidChange(textInput)
-//    performAutocomplete()
-//    performTextContextSync()
-//    tryChangeToPreferredKeyboardTypeAfterTextDidChange()
 
-    // fix: 输出栏点击右侧x形按钮后, 输入法候选栏内容没有跟随输入栏一同清空
     if !self.textDocumentProxy.hasText {
       self.rimeContext.reset()
     }
@@ -545,16 +503,9 @@ open class KeyboardInputViewController: UIInputViewController, KeyboardControlle
     // advanceToNextInputMode()
   }
 
-  open func selectNextLocale() {
-//    keyboardContext.selectNextLocale()
-  }
+  open func selectNextLocale() {}
 
   open func setKeyboardType(_ type: KeyboardType) {
-    // TODO: 键盘切换
-//    if !rimeContext.userInputKey.isEmpty, type.isCustom || type.isChinesePrimaryKeyboard || type.isChineseNineGrid || type.isAlphabetic {
-//      textDocumentProxy.insertText(rimeContext.userInputKey)
-//      rimeContext.reset()
-//    }
     keyboardContext.setKeyboardType(type)
   }
 
@@ -699,53 +650,6 @@ open class KeyboardInputViewController: UIInputViewController, KeyboardControlle
   open func resetAutocomplete() {
     autocompleteContext.reset()
   }
-
-  // MARK: - Dictation 听写
-
-  /**
-   The configuration to use when performing dictation from
-   the keyboard extension.
-
-   使用键盘扩展功能进行听写时要使用的配置。
-
-   By default, this uses the `appGroupId` and `appDeepLink`
-   properties from ``dictationContext``, so make sure that
-   you call ``DictationContext/setup(with:)`` before using
-   the dictation features in your keyboard extension.
-
-   默认情况下，它会使用 ``dictationContext`` 中的 `appGroupId` 和 `appDeepLink` 属性，
-   因此请确保在键盘扩展中使用听写功能前调用 ``DictationContext/setup(with:)` 。
-   */
-//  public var dictationConfig: KeyboardDictationConfiguration {
-//    .init(
-//      appGroupId: dictationContext.appGroupId ?? "",
-//      appDeepLink: dictationContext.appDeepLink ?? ""
-//    )
-//  }
-
-  /**
-   Perform a keyboard-initiated dictation operation.
-
-   执行键盘启动的听写操作。
-
-   > Important: ``DictationContext/appDeepLink`` must have
-   been set before this is called. The link must open your
-   app and start dictation. See the docs for more info.
-
-   > 重要：必须在调用此链接之前设置``DictationContext/appDeepLink``。
-   > 链接必须打开主应用程序并开始听写。更多信息请参阅文档。
-   */
-//  public func performDictation() {
-//    Task {
-//      do {
-//        try await dictationService.startDictationFromKeyboard(with: dictationConfig)
-//      } catch {
-//        await MainActor.run {
-//          dictationContext.lastError = error
-//        }
-//      }
-//    }
-//  }
 }
 
 // MARK: - Private Functions
@@ -772,39 +676,6 @@ private extension KeyboardInputViewController {
     )
   }
 
-  /**
-   Set up an initial width to avoid broken SwiftUI layouts.
-
-   设置键盘初始宽度，以避免 SwiftUI 布局被破坏。
-   */
-  func setupInitialWidth() {
-    view.frame.size.width = UIScreen.main.bounds.width
-    Logger.statistics.debug("view frame width: \(UIScreen.main.bounds.width)")
-  }
-
-  /**
-   Setup locale observation to handle locale-based changes.
-
-   设置本地化观测，以处理基于本地化的更改。
-   */
-  func setupLocaleObservation() {
-//    keyboardContext.$locale.sink { [weak self] in
-//      guard let self = self else { return }
-//      let locale = $0
-//      self.primaryLanguage = locale.identifier
-//      self.autocompleteProvider.locale = locale
-//    }.store(in: &cancellables)
-  }
-
-  /**
-   Set up the standard next keyboard button behavior.
-
-   设置标准的下一个键盘按钮行为。
-   */
-  func setupNextKeyboardBehavior() {
-    NextKeyboardController.shared = self
-  }
-
   var needNumberKeyboard: Bool {
     switch textDocumentProxy.keyboardType {
     case .numbersAndPunctuation, .numberPad, .phonePad, .decimalPad, .asciiCapableNumberPad: return true
@@ -816,14 +687,7 @@ private extension KeyboardInputViewController {
    RIME 引擎设置
    */
   func setupRIME() {
-    // 异步 RIME 引擎启动
     Task.detached { [unowned self] in
-//      if await rimeContext.isRunning {
-//        Logger.statistics.debug("shutdown rime engine")
-//        // 这里关闭引擎是为了使 RIME 内存中的自造词落盘。
-//        await shutdownRIME()
-//      }
-
       guard await !rimeContext.isRunning else { return }
 
       if let maximumNumberOfCandidateWords = await keyboardContext.hamsterConfiguration?.rime?.maximumNumberOfCandidateWords {
@@ -834,16 +698,12 @@ private extension KeyboardInputViewController {
         await rimeContext.setUseContextPaging(swipePaging == false)
       }
 
-      await rimeContext.start(hasFullAccess: true)
+      await rimeContext.start()
     }
   }
 
   func shutdownRIME() {
-    /// 停止引擎，触发自造词等数据落盘
     rimeContext.shutdown()
-
-    /// 重新启动引擎
-    /// rimeContext.start(hasFullAccess: hasFullAccess)
   }
 
   /// Combine 观测 RIME 引擎中的用户输入及上屏文字
@@ -886,37 +746,6 @@ private extension KeyboardInputViewController {
         }
       }
       .store(in: &cancellables)
-
-//    rimeContext.registryHandleUserInputKeyChanged { [weak self] inputText in
-//      guard let self = self else { return }
-//
-//      // 获取与清空在一起，防止重复上屏
-//      let commitText = self.rimeContext.commitText
-//      self.rimeContext.resetCommitText()
-//
-//      // 写入上屏文字
-//      if !commitText.isEmpty {
-//        self.textDocumentProxy.setMarkedText("", selectedRange: NSRange(location: 0, length: 0))
-//
-//        // 写入 userInputKey
-//        DispatchQueue.main.asyncAfter(deadline: .now() + 0.001) {
-//          self.insertTextPatch(commitText)
-//        }
-//      }
-//
-//      // 非嵌入模式在 CandidateWordsView.swift 中处理，直接输入 Label 中
-//      guard self.keyboardContext.enableEmbeddedInputMode else { return }
-//
-//      // 写入 userInputKey
-//      DispatchQueue.main.asyncAfter(deadline: .now() + 0.001) {
-//        if self.keyboardContext.keyboardType.isChineseNineGrid {
-//          let t9UserInputKey = self.rimeContext.t9UserInputKey
-//          self.textDocumentProxy.setMarkedText(t9UserInputKey, selectedRange: NSMakeRange(t9UserInputKey.utf8.count, 0))
-//          return
-//        }
-//        self.textDocumentProxy.setMarkedText(inputText, selectedRange: NSMakeRange(inputText.utf8.count, 0))
-//      }
-//    }
   }
 
   /// 在 ``textDocumentProxy`` 的文本发生变化后，尝试更改为首选键盘类型

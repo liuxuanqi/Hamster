@@ -190,21 +190,16 @@ public extension RimeContext {
     self.asciiMode = model
   }
 
-  /// RIME 启动
-  /// 注意：仅用于键盘扩展调用
-  func start(hasFullAccess: Bool) async {
+  /// 引擎启动
+  func start() async {
     Rime.shared.setNotificationDelegate(self)
 
-    // 启动
     Rime.shared.start(Rime.createTraits(
       sharedSupportDir: FileManager.appGroupSharedSupportDirectoryURL.path,
-      userDataDir: hasFullAccess ? FileManager.appGroupUserDataDirectoryURL.path : FileManager.sandboxUserDataDirectory.path
+      userDataDir: FileManager.appGroupUserDataDirectoryURL.path
     ))
 
-    // 设置初始输入方案
     setupRimeInputSchema()
-
-    // 中英状态同步
     await setAsciiMode(Rime.shared.isAsciiMode())
   }
 

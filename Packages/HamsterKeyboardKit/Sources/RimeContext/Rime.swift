@@ -39,14 +39,8 @@ public class Rime {
         notificationDelegate = delegate
     }
 
-    public func start(_ traits: IRimeTraits? = nil, maintenance: Bool = false, fullCheck: Bool = false) {
+    public func start(_ traits: IRimeTraits? = nil) {
         self.traits = traits
-
-        if maintenance, let userDir = traits?.userDataDir, !userDir.isEmpty {
-            let buildDir = URL(fileURLWithPath: userDir).appendingPathComponent("build")
-            try? FileManager.default.createDirectory(at: buildDir, withIntermediateDirectories: true)
-        }
-
         loadSession()
     }
 
