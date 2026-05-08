@@ -9,15 +9,6 @@ public protocol IRimeNotificationDelegate: AnyObject {
 public class IRimeTraits: @unchecked Sendable {
     public var sharedDataDir: String = ""
     public var userDataDir: String = ""
-    public var distributionName: String = ""
-    public var distributionCodeName: String = ""
-    public var distributionVersion: String = ""
-    public var appName: String = ""
-    public var modules: [String] = []
-    public var minLogLevel: Int32 = 0
-    public var logDir: String = ""
-    public var prebuiltDataDir: String = ""
-    public var stagingDir: String = ""
 
     public init() {}
 }

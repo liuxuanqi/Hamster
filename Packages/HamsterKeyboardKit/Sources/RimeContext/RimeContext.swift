@@ -49,18 +49,10 @@ public class RimeContext {
   /// 待上屏文字
   public private(set) lazy var commitText: String = ""
 
-  /// T9拼音，将用户T9拼音输入还原为正常的拼音
+  /// T9拼音（sime 不支持 T9，直接返回 preedit）
   @MainActor
   public var t9UserInputKey: String {
-    var preview = rimeContext?.composition.preedit ?? ""
-    if let highlightIndex = rimeContext?.menu.highlightedCandidateIndex,
-       let candidates = rimeContext?.menu.candidates,
-       highlightIndex < candidates.count
-    {
-      let candidate = candidates[Int(highlightIndex)]
-      preview = preview.t9pinyinToPinyin(comment: candidate.comment ?? "")
-    }
-    return preview.replaceT9pinyin
+    rimeContext?.composition.preedit ?? ""
   }
 
   /// rime option 选项对应的值的缓存
@@ -358,81 +350,9 @@ public extension RimeContext {
   }
 }
 
-// MARK: - T9 拼音处理
+// MARK: - T9 拼音处理（stub — sime 不支持 T9）
 
 public extension RimeContext {
-  /// 获取拼音候选列表
   @MainActor
-  func getPinyinCandidates() -> [String] {
-    var pinyinList = [String]()
-    guard let preedit = rimeContext?.composition.preedit, !preedit.isEmpty else { return pinyinList }
-
-    // 删除音节
-    var prePinypin = preedit.replacingOccurrences(of: " ", with: "")
-    guard !prePinypin.isEmpty else { return pinyinList }
-
-    // 删除开头非数字字符
-    while !prePinypin.isEmpty {
-      if let firstCharacter = prePinypin.first, firstCharacter.isNumber {
-        break
-      }
-      prePinypin.removeFirst()
-    }
-
-    // 拼写区非数字情况，取最后一个音节的拼音列表
-    if prePinypin.isEmpty {
-      // 如果不包含 t9 拼音，则使用最后一个拼音音节
-      if var lastPinyin = preedit.split(separator: " ").last {
-        // 音节可能会丢失，这里需要删除非字母的字符
-        // 注意: 小心死循环
-        while !lastPinyin.isEmpty {
-          if let first = lastPinyin.first, first.isLowercase {
-            break
-          }
-          _ = lastPinyin.removeFirst()
-        }
-
-        if var firstT9Pinyin = pinyinToT9Mapping[String(lastPinyin)] {
-          /// 遍历包含的全部拼音子串
-          while !firstT9Pinyin.isEmpty {
-            if let list = t9ToPinyinMapping[firstT9Pinyin] {
-              pinyinList.append(contentsOf: list)
-            }
-            _ = firstT9Pinyin.popLast()
-          }
-        }
-      }
-    } else {
-      // 使用 trie 结构判断 pre 的字符
-      for count in 1 ... prePinypin.count {
-        let sub = String(prePinypin.prefix(count))
-        if !t9PinyinTrie.contains(sub) {
-          break
-        }
-        if let subList = t9ToPinyinMapping[sub] {
-          pinyinList.append(contentsOf: subList)
-        }
-      }
-    }
-
-    return pinyinList.sorted(by: {
-      if $0.count > $1.count {
-        return true
-      }
-
-      if $0.count == $1.count {
-        if let _ = Int($0) {
-          return false
-        }
-
-        if let _ = Int($1) {
-          return false
-        }
-
-        return $0 < $1
-      }
-
-      return false
-    })
-  }
+  func getPinyinCandidates() -> [String] { [] }
 }

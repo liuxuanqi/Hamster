@@ -78,7 +78,7 @@
 		C03EC3AB2B06671900DB741E /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
 		C03EC3AC2B06671A00DB741E /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		C071BECB2970072100E21FBC /* HamsterKeyboard.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = HamsterKeyboard.entitlements; sourceTree = "<group>"; };
-		C08387F12A55897700EA8082 /* RimeKit */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = RimeKit; path = Packages/RimeKit; sourceTree = "<group>"; };
+
 		C08387F32A5589A400EA8082 /* HamsterUIKit */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = HamsterUIKit; path = Packages/HamsterUIKit; sourceTree = "<group>"; };
 		C08387F42A5589AF00EA8082 /* HamsterKit */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = HamsterKit; path = Packages/HamsterKit; sourceTree = "<group>"; };
 		C08387F52A5589DF00EA8082 /* HamsteriOS */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = HamsteriOS; path = Packages/HamsteriOS; sourceTree = "<group>"; };
@@ -180,7 +180,6 @@
 				C08387F52A5589DF00EA8082 /* HamsteriOS */,
 				C08387F32A5589A400EA8082 /* HamsterUIKit */,
 				C08387F42A5589AF00EA8082 /* HamsterKit */,
-				C08387F12A55897700EA8082 /* RimeKit */,
 				C0C8B57E2A823BBF009972C1 /* HamsterKeyboardKit */,
 			);
 			name = Packages;

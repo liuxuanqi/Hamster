@@ -24,13 +24,6 @@ public class Rime {
         let traits = IRimeTraits()
         traits.sharedDataDir = sharedSupportDir
         traits.userDataDir = userDataDir
-        traits.distributionCodeName = "TianShu"
-        traits.distributionName = "TianShu"
-        traits.distributionVersion = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? ""
-        traits.appName = "rime.Hamster"
-        if !models.isEmpty {
-            traits.modules = models
-        }
         return traits
     }
 
