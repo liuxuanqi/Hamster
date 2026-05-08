@@ -2,9 +2,6 @@ import Foundation
 import HamsterKit
 
 public protocol IRimeNotificationDelegate: AnyObject {
-    func onDeployStart()
-    func onDeploySuccess()
-    func onDeployFailure()
     func onChangeMode(_ mode: String)
     func onLoadingSchema(_ schema: String)
 }

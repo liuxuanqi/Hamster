@@ -251,18 +251,6 @@ public extension RimeContext {
 // MARK: implementation IRimeNotificationDelegate
 
 extension RimeContext: IRimeNotificationDelegate {
-  public func onDeployStart() {
-    Logger.statistics.info("HamsterRimeNotification: onDeployStart")
-  }
-
-  public func onDeploySuccess() {
-    Logger.statistics.info("HamsterRimeNotification: onDeploySuccess")
-  }
-
-  public func onDeployFailure() {
-    Logger.statistics.info("HamsterRimeNotification: onDeployFailure")
-  }
-
   @MainActor
   public func onChangeMode(_ option: String) {
     Logger.statistics.info("HamsterRimeNotification: onChangeMode, mode: \(option)")
@@ -288,17 +276,7 @@ extension RimeContext: IRimeNotificationDelegate {
 
   @MainActor
   public func onLoadingSchema(_ loadSchema: String) {
-    Logger.statistics.info("HamsterRimeNotification: onLoadingSchema, schema: \(loadSchema)")
-    Task {
-      let currentSchema = self.currentSchema
-      let schemaID = loadSchema.split(separator: "/").map { String($0) }[0]
-      guard !schemaID.isEmpty, currentSchema?.schemaId != schemaID else { return }
-      // 从当前全部方案列表中获取
-      guard let changeSchema = self.schemas.first(where: { $0.schemaId == schemaID }) else { return }
-      self.setCurrentSchema(changeSchema)
-      self.optionState = changeSchema.schemaName
-      Logger.statistics.info("loading schema callback: currentSchema = \(changeSchema.schemaName), latestSchema = \(currentSchema?.schemaName)")
-    }
+    Logger.statistics.info("onLoadingSchema: \(loadSchema) (ignored, single schema)")
   }
 }
 
